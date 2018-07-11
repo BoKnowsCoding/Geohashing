@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1065355118984",
+    "firebase_url": "https://geohashing-16a3d.firebaseio.com",
+    "project_id": "geohashing-16a3d",
+    "storage_bucket": "geohashing-16a3d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1065355118984:android:803b182f362c4052",
+        "android_client_info": {
+          "package_name": "fsu.mobile.group1.geohashing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1065355118984-5mdqjjeniqad2n98tcmgmnoq5mrrgvfs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "fsu.mobile.group1.geohashing",
+            "certificate_hash": "bd63f18d5dd57ceef6317e4a4b4ad323c3b04bdf"
+          }
+        },
+        {
+          "client_id": "1065355118984-bhr71v2irvcjncnihjisl0jtjlpbf588.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBu3-8cvBhWN0jDHBDU9wJWHeEYrbnoojU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1065355118984-bhr71v2irvcjncnihjisl0jtjlpbf588.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
