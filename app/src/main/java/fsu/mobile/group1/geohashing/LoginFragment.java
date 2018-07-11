@@ -4,12 +4,14 @@ package fsu.mobile.group1.geohashing;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EdgeEffect;
 import android.widget.EditText;
+import android.widget.Toast;
 
 
 /**
@@ -47,6 +49,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         mGoogle=root.findViewById(R.id.sign_in_button);
         mUser=root.findViewById(R.id.username);
         mPassword=root.findViewById(R.id.password);
+        mGoogle.setOnClickListener(this);
+        mLogin.setOnClickListener(this);
+        mRegister.setOnClickListener(this);
         return root;
     }
 
@@ -63,6 +68,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v){
+        Log.i("test","onClick function called");
         Bundle bundle=new Bundle();
         String user=null;
         String pass=null;
