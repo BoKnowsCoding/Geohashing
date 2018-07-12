@@ -35,7 +35,7 @@
         android:layout_below="@+id/register_password"
         android:layout_centerHorizontal="true"
         android:ems="10"
-        android:hint="Password"
+        android:hint="Confirm Password"
         android:inputType="textPassword"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
