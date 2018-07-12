@@ -21,12 +21,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     public interface LoginListener{
     public void onSignIn(Bundle bundle);
-    public void onRegister();
     public void onGoogleSignIn();
     }
     private LoginListener loginListener;
     private Button mLogin;
-    private Button mRegister;
     private com.google.android.gms.common.SignInButton mGoogle;
     private EditText mUser;
     private EditText mPassword;
@@ -45,13 +43,13 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
         /*set the id's of Buttons and EditTexts*/
         mLogin=root.findViewById(R.id.sign_in);
-        mRegister=root.findViewById(R.id.register);
+        //mRegister=root.findViewById(R.id.register);
         mGoogle=root.findViewById(R.id.sign_in_button);
         mUser=root.findViewById(R.id.username);
         mPassword=root.findViewById(R.id.password);
         mGoogle.setOnClickListener(this);
         mLogin.setOnClickListener(this);
-        mRegister.setOnClickListener(this);
+        //mRegister.setOnClickListener(this);
         return root;
     }
 
@@ -80,9 +78,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         bundle.putString("user", user);
         bundle.putString("pass", pass);
         loginListener.onSignIn(bundle);
-        }
-        else if(v==mRegister){
-            loginListener.onRegister();
         }
         else if(v==mGoogle){
             loginListener.onGoogleSignIn();
