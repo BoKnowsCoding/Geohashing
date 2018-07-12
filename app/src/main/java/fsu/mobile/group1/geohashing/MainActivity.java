@@ -4,7 +4,7 @@ package fsu.mobile.group1.geohashing;
 * https://stackoverflow.com/questions/32671004/how-to-change-the-color-of-a-button-in-android-studio/32671191
 * Google Android Developer Documentation
 * Code from Previous Projects
-*Udacity Firebase Course
+* Udacity Firebase Course
 * */
 
 import android.content.Intent;
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
     private GoogleSignInClient mGoogleSignIn;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mMessagesDatabaseReference;
-//this is a comment
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

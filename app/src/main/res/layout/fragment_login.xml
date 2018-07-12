@@ -22,7 +22,7 @@
         android:layout_centerInParent="true"
         android:ems="10"
         android:hint="Email"
-        android:inputType="textPersonName"
+        android:inputType="textEmailAddress"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <EditText
@@ -34,7 +34,7 @@
         android:layout_marginBottom="194dp"
         android:ems="10"
         android:hint="Password"
-        android:inputType="textPersonName"
+        android:inputType="textPassword"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
