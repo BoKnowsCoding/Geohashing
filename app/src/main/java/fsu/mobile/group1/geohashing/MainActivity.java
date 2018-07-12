@@ -7,6 +7,7 @@ package fsu.mobile.group1.geohashing;
 * Udacity Firebase Course
 * */
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
@@ -74,11 +75,11 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
     public void onSignIn(Bundle bundle){
     String user = bundle.getString("user");
     String pass= bundle.getString("pass");
-   Intent intent = new Intent(MainActivity.this, GameActivity.class);
+    Intent intent = new Intent(MainActivity.this, MapsActivity.class);
     startActivity(intent);
 
     //check the Firebase Database to see if the user already exists
-    //If they do not, fire a toast and register the user.  Then start the GameActivity
+    //If they do not, fire a toast and register the user.  Then start the MapsActivity
 
     }
 
@@ -94,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         startActivityForResult(signInIntent, 1000);                                                                         //start the the activity to the sign in the user
     }
 
-    //after the user has signed in using their email this will call updateUI which will launch the GameActivity
+    //after the user has signed in using their email this will call updateUI which will launch the MapsActivity
     @Override
     public void onActivityResult(int RequestCode, int resultCode, Intent data){
         super.onActivityResult(RequestCode, resultCode, data);
@@ -103,11 +104,11 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
 
     }
 
-    //starts the GameActivity
+    //starts the MapsActivity
     public void updateUI(Task<GoogleSignInAccount> task){
         try{
             GoogleSignInAccount account=task.getResult(ApiException.class);
-            Intent intent=new Intent(MainActivity.this, GameActivity.class);
+            Intent intent=new Intent(MainActivity.this, MapsActivity.class);
             //need to add the task to the UI
             startActivity(intent);
         }
