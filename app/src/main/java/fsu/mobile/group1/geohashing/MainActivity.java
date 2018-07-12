@@ -8,8 +8,11 @@ package fsu.mobile.group1.geohashing;
 * */
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -29,6 +32,9 @@ import com.google.firebase.database.FirebaseDatabase;
 
 
 public class MainActivity extends AppCompatActivity implements LoginFragment.LoginListener, GoogleApiClient.OnConnectionFailedListener{
+    //Id codes for permission checks
+    static final int MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE = 3, MY_PERMISSIONS_REQUEST_INTERNET = 4,
+            MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 5, MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 20;
 
     private FragmentManager mManager;
     private FragmentTransaction fragTransaction;
@@ -46,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         mFirebaseDatabase=FirebaseDatabase.getInstance();   //initialize database reference
         mMessagesDatabaseReference=mFirebaseDatabase.getReference().child("users"); //get references
 
+        //Just gona check perms programatically
+        checkReadPermissions();
         displayLogin();
     }
 
@@ -105,6 +113,32 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         }
         catch (ApiException e){
                     }
+
+    }
+
+    //If there's any more permissions you need just copy and paste one of these and substitute
+    public void checkReadPermissions()
+    {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_NETWORK_STATE)
+                != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_NETWORK_STATE},
+                    MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE);
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.INTERNET)
+                != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.INTERNET},
+                    MY_PERMISSIONS_REQUEST_INTERNET);
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE)
+                != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.READ_PHONE_STATE},
+                    MY_PERMISSIONS_REQUEST_READ_PHONE_STATE);
 
     }
 }
