@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MyUser {
-    public static final String USER_NAME = "name";
+    public static final String USER_NAME = "userName";
     public static final String LAST_KNOWN_LOCATION = "lastKnownLocation";
     public static final String USER_SCORE = "userScore";                    //Times Won
 

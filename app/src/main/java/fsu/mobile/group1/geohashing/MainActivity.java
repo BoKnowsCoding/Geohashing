@@ -10,6 +10,7 @@ package fsu.mobile.group1.geohashing;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -108,13 +109,18 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
     }
 
     public void onSignIn(Bundle bundle){
-    String user = bundle.getString("user");
-    String pass= bundle.getString("pass");
-    Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-    startActivity(intent);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference();
+        String user = bundle.getString("user");
+        String pass= bundle.getString("pass");
 
-    //check the Firebase Database to see if the user already exists
-    //If they do not, fire a toast and register the user.  Then start the MapsActivity
+        //check the Firebase Database to see if the user already exists
+        //If they do not, fire a toast and register the user.  Then start the MapsActivity
+        /*^^^DONT NEED THIS ANYMORE BECAUSE IT WILL BE HANDLED BY LOGIN AND REGISTER FRAGMENTS JUST
+        TO CHANGE ACTIVITIES*/
+        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+        startActivity(intent);;
+
 
     }
 
@@ -164,11 +170,12 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         //Gonna need to figure out how lastknownloc will be saved and updated, for now empty string
         MyUser user = new MyUser(acct.getDisplayName(), "", 0);
 
-        String key = myRef.child(FIREBASE_TABLE).push().getKey();
+
+        myRef.child(acct.getUid()).setValue(user);
         Map<String, Object> postValues = user.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/" + FIREBASE_TABLE + "/" + key, postValues);
+        childUpdates.put("/" + FIREBASE_TABLE + "/" + acct.getUid(), postValues);
         myRef.updateChildren(childUpdates);
     }
 

@@ -20,6 +20,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 /**
@@ -122,6 +127,28 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            //CHECKING OUR DATABASE FOR USER, ADD THEM IF DOESN'T EXIST YET
+                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                            DatabaseReference myRef = database.getReference("users");
+                            //Users are stored with uIds automatically
+                            myRef.child(user.getUid()).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    //This user literally exists cuz since this is an inner class id have to declare user
+                                    //final to save to database and screw that
+                                    FirebaseUser userForNestedClass = mAuth.getCurrentUser();
+                                    //If user doesn't exist we'll add it to our database otherwise we'll continue on
+                                    if(!dataSnapshot.exists())
+                                    {
+                                        MainActivity.saveToDatabase(userForNestedClass);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
