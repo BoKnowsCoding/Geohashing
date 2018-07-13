@@ -30,8 +30,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private String TAG = "LoginFragment";
 
     public interface LoginListener{
-    public void onSignIn(Bundle bundle);
-    public void onGoogleSignIn();
+    void onSignIn(Bundle bundle);
+    void onGoogleSignIn();
     }
     private LoginListener loginListener;
     private Button mLogin;
@@ -84,8 +84,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v){
         Log.i("test","onClick function called");
         Bundle bundle=new Bundle();
-        String user=null;
-        String pass=null;
+        String user;
+        String pass;
         //calls appropriate interface method based on which button has been clicked
         if(v==mLogin){
             //package up user and password in bundle and pass to sign-in method
