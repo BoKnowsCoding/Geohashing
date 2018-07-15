@@ -2,6 +2,7 @@ package fsu.mobile.group1.geohashing;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -58,6 +59,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            Log.i(TAG,user.getEmail() + " signed in");
+            toGameActivity();
+        }
 
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_login, container, false);
@@ -87,7 +93,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v){
-        Log.i("test","onClick function called");
+        Log.i(TAG,"onClick function called");
         Bundle bundle=new Bundle();
         String user;
         String pass;
@@ -149,13 +155,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
                                 }
                             });
-                            updateUI(user);
+                            toGameActivity();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(getActivity(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            updateUI(null);
                         }
 
                         // ...
@@ -163,8 +168,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 });
     }
 
-    private void updateUI(FirebaseUser user) {
-        // do stuff ?
+    private void toGameActivity() {
+        Intent intent = new Intent(getActivity(), GameActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
 

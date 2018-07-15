@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         /*^^^DONT NEED THIS ANYMORE BECAUSE IT WILL BE HANDLED BY LOGIN AND REGISTER FRAGMENTS JUST
         TO CHANGE ACTIVITIES*/
         Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-        startActivity(intent);;
+        startActivity(intent);
 
 
     }
