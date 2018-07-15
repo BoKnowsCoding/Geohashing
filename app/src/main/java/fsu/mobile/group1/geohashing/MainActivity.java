@@ -25,6 +25,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.internal.GoogleSignInOptionsExtensionParcelable;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -99,6 +100,13 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         });
         */
         //Just gonna check perms programatically
+
+        GoogleSignInAccount user = GoogleSignIn.getLastSignedInAccount(this);
+        if (user != null) {
+            Intent intent = new Intent(this, GameActivity.class);
+            startActivity(intent);
+        }
+
         checkReadPermissions();
         displayLogin();
     }
