@@ -1,7 +1,7 @@
 package fsu.mobile.group1.geohashing;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.Exclude;
+//import com.google.firebase.database.DataSnapshot;
+//import com.google.firebase.database.Exclude;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,6 +57,7 @@ public class MyUser {
         mUserScore = mUserScore++;
     }
 
+    /*
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
@@ -73,5 +74,5 @@ public class MyUser {
         int score = (int) userSnapshot.child(USER_SCORE).getValue();
 
         return new MyUser(username, lastKnown, score);
-    }
+    }*/
 }

@@ -29,13 +29,14 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+//import com.google.firebase.auth.FirebaseAuth;
+//import com.google.firebase.auth.FirebaseUser;
+//import com.google.firebase.database.DataSnapshot;
+//import com.google.firebase.database.DatabaseError;
+//import com.google.firebase.database.DatabaseReference;
+//import com.google.firebase.database.FirebaseDatabase;
+//import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,19 +55,26 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
 
     private FragmentManager mManager;
     private FragmentTransaction fragTransaction;
-    private FirebaseAuth mAuth;
+  //  private FirebaseAuth mAuth;
     private GoogleApiClient mClient;
     private GoogleSignInClient mGoogleSignIn;
-    private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mDatabaseReference;
+    //private FirebaseDatabase mFirebaseDatabase;
+    //private DatabaseReference mDatabaseReference;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mAuth=FirebaseAuth.getInstance();       //initialize firebase variable
-        mFirebaseDatabase=FirebaseDatabase.getInstance();   //initialize database reference
-        mDatabaseReference=mFirebaseDatabase.getReference(FIREBASE_TABLE); //get references
+        //mAuth=FirebaseAuth.getInstance();       //initialize firebase variable
+        // mFirebaseDatabase=FirebaseDatabase.getInstance();   //initialize database reference
+        //mDatabaseReference=mFirebaseDatabase.getReference(FIREBASE_TABLE); //get references
+
+
+
+        // Access a Cloud Firestore instance from your Activity
 
 
         /*Right now this does nothing but I think this is what we would use
@@ -110,15 +118,15 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
     }
 
     public void onSignIn(Bundle bundle){
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference();
+        //FirebaseDatabase database = FirebaseDatabase.getInstance();
+        //DatabaseReference myRef = database.getReference();
         String user = bundle.getString("user");
         String pass= bundle.getString("pass");
 
         /*^^^DONT NEED THIS ANYMORE BECAUSE IT WILL BE HANDLED BY LOGIN AND REGISTER FRAGMENTS JUST
         TO CHANGE ACTIVITIES*/
-        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-        startActivity(intent);;
+        Intent intent = new Intent(MainActivity.this, GameActivity.class);
+        startActivity(intent);
 
 
     }
@@ -148,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
     public void updateUI(Task<GoogleSignInAccount> task){
         try{
             GoogleSignInAccount account=task.getResult(ApiException.class);
-            Intent intent=new Intent(MainActivity.this, MapsActivity.class);
+            Intent intent=new Intent(MainActivity.this, GameActivity.class);
             //need to add the task to the UI
             startActivity(intent);
         }
@@ -158,9 +166,9 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
 
     }
 
-
     //Adds a FirebaseUser entry to Firebase database (JSON Datbase) called when registering or logging in
     //^obvs check when logging in if there's someone in the database
+    /*
     public static void saveToDatabase(FirebaseUser acct) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference();
@@ -177,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         childUpdates.put("/" + FIREBASE_TABLE + "/" + acct.getUid(), postValues);
         myRef.updateChildren(childUpdates);
     }
-
+*/
     //If there's any more permissions you need just copy and paste one of these and substitute
     public void checkReadPermissions()
     {

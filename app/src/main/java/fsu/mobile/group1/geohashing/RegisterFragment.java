@@ -14,18 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.concurrent.Executor;
 
 
 /**
@@ -37,7 +26,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     private EditText mEmail;
     private EditText mPassword;
     private EditText mConfirmPassword;
-    private FirebaseAuth mAuth;
+   // private FirebaseAuth mAuth;
 
     private String TAG = "RegisterFragment";
 
@@ -48,7 +37,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mAuth = FirebaseAuth.getInstance();
+       // mAuth = FirebaseAuth.getInstance();
 
         // Inflate the layout for this fragment
         View root= inflater.inflate(R.layout.fragment_register, container, false);
@@ -90,12 +79,13 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
     private boolean checkForm() {
         if (mPassword.getText().toString().equals(mConfirmPassword.getText().toString())) {
-            registerAccount(mEmail.getText().toString(),mPassword.getText().toString());
+            //registerAccount(mEmail.getText().toString(),mPassword.getText().toString());
             return true;
         }
         return false;
     }
 
+    /*
     private void registerAccount(String email, String password) {
 
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -103,14 +93,14 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            FirebaseDatabase database = FirebaseDatabase.getInstance();
-                            DatabaseReference myRef = database.getReference();
+                            //FirebaseDatabase database = FirebaseDatabase.getInstance();
+                            //DatabaseReference myRef = database.getReference();
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             //User is now in database no need to check if already exists because
                             //This this is for registering
-                            MainActivity.saveToDatabase(user);
+                            //MainActivity.saveToDatabase(user);
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -128,5 +118,5 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     private void updateUI(FirebaseUser user) {
         // do stuff ?
     }
-
+*/
 }
