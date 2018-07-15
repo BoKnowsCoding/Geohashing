@@ -5,6 +5,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
 
 //This is the activity where we will base everything game related
 //We will launch the MapsActivity Fragment from here as well as any other fragments needed to support the game
@@ -17,6 +19,9 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        // Access a Cloud Firestore instance from your Activity
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         renderUI();
     }
 
@@ -36,4 +41,12 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
     public void onJoinGame(){
 
     }
+
+    //retrieves and lists the current games that are available to join
+    public void getGames(){
+
+    }
+
 }
+
+
