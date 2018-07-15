@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         to update the map when their last known location changes. What this
         does is gives us a DataSnapchat to work with whenever something in
         our database changes. Not sure if we need this but we'll see*/
+        /*
         mDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -88,8 +89,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
-
-        //Just gona check perms programatically
+        */
+        //Just gonna check perms programatically
         checkReadPermissions();
         displayLogin();
     }
@@ -114,8 +115,6 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         String user = bundle.getString("user");
         String pass= bundle.getString("pass");
 
-        //check the Firebase Database to see if the user already exists
-        //If they do not, fire a toast and register the user.  Then start the MapsActivity
         /*^^^DONT NEED THIS ANYMORE BECAUSE IT WILL BE HANDLED BY LOGIN AND REGISTER FRAGMENTS JUST
         TO CHANGE ACTIVITIES*/
         Intent intent = new Intent(MainActivity.this, MapsActivity.class);
