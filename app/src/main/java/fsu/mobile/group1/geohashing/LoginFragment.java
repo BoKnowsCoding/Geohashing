@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+/*
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,7 +26,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
+*/
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,7 +46,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private EditText mUser;
     private EditText mPassword;
 
-    private FirebaseAuth mAuth;
+//    private FirebaseAuth mAuth;
 
 
     public LoginFragment() {
@@ -57,7 +58,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mAuth = FirebaseAuth.getInstance();
+//        mAuth = FirebaseAuth.getInstance();
 
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_login, container, false);
@@ -101,7 +102,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             bundle.putString("pass", pass);
             loginListener.onSignIn(bundle);
             */
-            onSignIn(user,pass);
+            //onSignIn(user,pass);
         }
         else if(v==mGoogle) {
             loginListener.onGoogleSignIn();
@@ -117,7 +118,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         }
 
     }
-
+/*
     private void onSignIn(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
@@ -162,10 +163,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                     }
                 });
     }
-
-    private void updateUI(FirebaseUser user) {
-        // do stuff ?
-    }
-
+*/
 
 }
