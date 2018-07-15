@@ -101,9 +101,12 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         */
         //Just gonna check perms programatically
 
+        // forwards the user directly to GameActivity if they signed in in a previous session
         GoogleSignInAccount user = GoogleSignIn.getLastSignedInAccount(this);
         if (user != null) {
             Intent intent = new Intent(this, GameActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }
 
@@ -139,16 +142,27 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
 
     }
 
-    //set the google sign in--if the button gets pushed more than once, we crash...gonna have to check for that and do nothing when it's pressed multiple times or something...
+    //set the google sign in--if the button gets pushed more than once, we crash...
+    // gonna have to check for that and do nothing when it's pressed multiple times or something...
     public void onGoogleSignIn(){
-        Toast.makeText(getApplicationContext(), "Google Sign In Button Pushed", Toast.LENGTH_SHORT).show();
-        GoogleSignInOptions gso=new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)        //create a google sign in options variable
+        Toast.makeText(getApplicationContext(),
+                "Google Sign In Button Pushed", Toast.LENGTH_SHORT).show();
+
+        //create a google sign in options variable
+        GoogleSignInOptions gso=new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build();
-        mClient=new GoogleApiClient.Builder(this).enableAutoManage(MainActivity.this, this) //create a new Google API Client
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
+        mClient=new GoogleApiClient.Builder(this)
+                .enableAutoManage(MainActivity.this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso).build(); //create a new Google API Client
         mGoogleSignIn=GoogleSignIn.getClient(this, gso);
-        Intent signInIntent=mGoogleSignIn.getSignInIntent();                                                                            //create signIn intent
-        startActivityForResult(signInIntent, 1000);                                                                         //start the the activity to the sign in the user
+
+        //create signIn intent
+        Intent signInIntent=mGoogleSignIn.getSignInIntent();
+        signInIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        signInIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        //start the the activity to the sign in the user
+        startActivityForResult(signInIntent, 1000);
     }
 
     //after the user has signed in using their email this will call updateUI which will launch the MapsActivity
