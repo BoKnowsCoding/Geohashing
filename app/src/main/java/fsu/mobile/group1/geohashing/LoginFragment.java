@@ -38,6 +38,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     public interface LoginListener{
     void onSignIn(Bundle bundle);
     void onGoogleSignIn();
+    void onFacebookSignIn();
     }
     private LoginListener loginListener;
     private Button mLogin;
@@ -45,6 +46,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private com.google.android.gms.common.SignInButton mGoogle;
     private EditText mUser;
     private EditText mPassword;
+    private com.facebook.login.widget.LoginButton mFacebook;
 
 //    private FirebaseAuth mAuth;
 
@@ -69,7 +71,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         mGoogle=root.findViewById(R.id.sign_in_button);
         mUser=root.findViewById(R.id.username);
         mPassword=root.findViewById(R.id.password);
+        mFacebook = root.findViewById(R.id.facebook_sign_in_button);
         mGoogle.setOnClickListener(this);
+        mFacebook.setOnClickListener(this);
         mLogin.setOnClickListener(this);
         mRegister.setOnClickListener(this);
         return root;
@@ -115,6 +119,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             trans.replace(R.id.login_fragment, fragment, "login_fragment");
             trans.addToBackStack(this.toString());
             trans.commit();
+        }
+        else if(v == mFacebook){
+            loginListener.onFacebookSignIn();
         }
 
     }
