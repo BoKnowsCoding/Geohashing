@@ -6,8 +6,6 @@
     tools:context=".GameUIFragment"
     tools:onClick="onClick">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"

@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".GameActivity">
 
+    <include
+        android:id="@+id/action_bar"
+        layout="@layout/toolbar_game"/>
+
+
     <FrameLayout
         android:id="@+id/ui_fragment"
         android:layout_width="match_parent"

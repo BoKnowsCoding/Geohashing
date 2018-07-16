@@ -161,8 +161,6 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
 
         //create signIn intent
         Intent signInIntent=mGoogleSignIn.getSignInIntent();
-        signInIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        signInIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         //start the the activity to the sign in the user
         startActivityForResult(signInIntent, 1000);
@@ -182,6 +180,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         try{
             GoogleSignInAccount account=task.getResult(ApiException.class);
             Intent intent=new Intent(MainActivity.this, GameActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
             //need to add the task to the UI
             startActivity(intent);
         }
