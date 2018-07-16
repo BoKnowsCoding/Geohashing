@@ -36,6 +36,8 @@ public class GameUIFragment extends Fragment implements View.OnClickListener{
         View root= inflater.inflate(R.layout.fragment_game_ui, container, false);
         mCreate=root.findViewById(R.id.create);
         mJoin=root.findViewById(R.id.join);
+        mJoin.setOnClickListener(this);
+        mCreate.setOnClickListener(this);
         return root;
     }
 

@@ -5,6 +5,9 @@ package fsu.mobile.group1.geohashing;
 * Google Android Developer Documentation
 * Code from Previous Projects
 * Udacity Firebase Course
+* https://stackoverflow.com/questions/32070975/populate-listview-with-arraylist-having-string-array-as-elements
+* http://www.zoftino.com/firebase-cloud-firestore-databse-tutorial-android-example#query-fireStore-database
+* https://stackoverflow.com/questions/17389231/getting-items-name-when-clicking-a-listview
 * */
 
 import android.app.Activity;
