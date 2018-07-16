@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">Geohashing</string>
     <string name="title_activity_maps">Map</string>
+    <string name="sign_out">Sign Out</string>
     <string name="register">Register</string>
     <string name="register_request">Please fill out the registration</string>
     <string name="confPass">Confirm Password</string>
     <string name="password">Password</string>
     <string name="email">Email</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
