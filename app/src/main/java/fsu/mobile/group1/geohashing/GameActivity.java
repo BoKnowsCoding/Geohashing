@@ -88,6 +88,15 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
 
     }
 
+    public void startGame()
+    {
+       FragmentManager fm = getSupportFragmentManager();
+        RunningGame fragment = new RunningGame();
+        fm.beginTransaction().add(R.id.ui_fragment,fragment).commit();
+        //so that loaded up the map fragment into the main one here
+        //then we need to attach all the listeners which will implement game logic
+    }
+
     private void signOut() {
         mGoogleSignInClient.signOut()
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
