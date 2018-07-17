@@ -48,6 +48,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Location mLastKnownLocation;
     Location mLastLocation;
     Marker mCurrLocationMarker;
+    private double goalLat;
+    private double goalLong;
     FusedLocationProviderClient mFusedLocationClient;
     private static final int DEFAULT_ZOOM = 15;
 
@@ -78,7 +80,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         if (task.isSuccessful()) {
                             double randomlat = Math.random() * .01 - .08;
                             double randomlong = Math.random() * .01 - .08;
-
+                            mLastKnownLocation = task.getResult();
                             Map<String, Object> data = new HashMap<>();
                             data.put("lat", mLastKnownLocation.getLatitude() + randomlat);
                             data.put("long", mLastKnownLocation.getLongitude() + randomlong);
