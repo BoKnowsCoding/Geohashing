@@ -116,11 +116,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             double randomlat = Math.random() *.002 -.001;
                             double randomlong = Math.random() *.002 -.001;
                             mLastKnownLocation = task.getResult();
-                            Map<String, Object> data = new HashMap<>();
+                            Map<String, String> data = new HashMap<>();
                             double lat = mLastKnownLocation.getLatitude() + randomlat;
                             double lng = mLastKnownLocation.getLongitude() + randomlong;
-                            data.put("lat", lat);
-                            data.put("long", lng);
+                            data.put("lat", String.valueOf(lat));
+                            data.put("long", String.valueOf(lng));
                             Log.i("MapsActivity", "Lat: " + lat );
                             Log.i("MapsActivity", "lng: " + lng );
                             db.collection(gameName).document("nodeList").collection("nodes").document("curNode")
