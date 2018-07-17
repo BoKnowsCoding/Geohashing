@@ -83,11 +83,11 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
 
     public void onCreateGame(){
         Log.i("GameActivity", "Oncreategame");
-            RunningGame newGame = new RunningGame();
-            mManager = getSupportFragmentManager();
-            fragTransaction = mManager.beginTransaction();
-            fragTransaction.add(R.id.ui_fragment,newGame);
-            fragTransaction.commit();
+        RunningGame newGame = new RunningGame();
+        mManager = getSupportFragmentManager();
+        fragTransaction = mManager.beginTransaction();
+        fragTransaction.add(R.id.ui_fragment,newGame);
+        fragTransaction.commit();
     }
 
     public void onJoinGame(){
