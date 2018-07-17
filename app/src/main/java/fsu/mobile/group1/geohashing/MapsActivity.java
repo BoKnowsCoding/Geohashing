@@ -36,6 +36,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -218,7 +219,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 }
                             }
                         });
-
+                        Map<String,Object> winMap = new HashMap<>();
+                        winMap.put("WIN","Y");
+                        db.collection(gameName).document("wins").set(winMap);
                     }
                 }
 
@@ -292,13 +295,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
 
                 if (snapshot != null && snapshot.exists()) {
-                    // NOTIFICATION
+                    Map<String,Object> win = snapshot.getData();
+                    String yesWin = (String)win.get("WIN");
+                    if(yesWin.equals("Y")){
+                        // NOTIFICATION HERE
+                    }
 
                 } else {
 
                 }
             }
         });
+
 
         DocumentReference docRef = db.collection(gameName).document("nodeList").collection("nodes").document("curNode");
         docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -333,6 +341,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    public void deleteFromDocRef(DocumentReference dr, String key){
+        Map<String,Object> remove = new HashMap<>();
+        remove.put(key,FieldValue.delete());
+        dr.update(remove);
+    }
 
 
 
