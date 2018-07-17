@@ -55,6 +55,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i("MapsActivity","onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -67,10 +68,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     private void createNextNode() {
-        /*
-         * Get the best and most recent location of the device, which may be null in rare
-         * cases when a location is not available.
-         */
+        Log.i("MapsActivity","createNExtNode");
         try {
             if (true) {
                 Task<Location> locationResult = mFusedLocationClient.getLastLocation();
@@ -82,8 +80,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             double randomlong = Math.random() * .01 - .08;
                             mLastKnownLocation = task.getResult();
                             Map<String, Object> data = new HashMap<>();
-                            data.put("lat", mLastKnownLocation.getLatitude() + randomlat);
-                            data.put("long", mLastKnownLocation.getLongitude() + randomlong);
+                            double lat = mLastKnownLocation.getLatitude() + randomlat;
+                            double lng = mLastKnownLocation.getLongitude() + randomlong;
+                            data.put("lat", lat);
+                            data.put("long", lng);
+                            Log.i("MapsActivity", "Lat: " + lat );
+                            Log.i("MapsActivity", "lng: " + lng );
                             db.collection(gameName).document("nodeList").collection("nodes").document("curNode")
                                     .set(data);
 
@@ -165,7 +167,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //LatLng sydney = new LatLng(-34, 151);
         //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
+        createNextNode();
         db.collection(gameName).document("nodeList").collection("nodes").document("curNode").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshots) {

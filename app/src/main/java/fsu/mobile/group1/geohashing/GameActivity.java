@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -47,6 +48,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         mFBLoginManager = LoginManager.getInstance();
         // Access a Cloud Firestore instance from your Activity
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        //onCreateGame();
         renderUI();
     }
 
@@ -78,7 +80,12 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
     }
 
     public void onCreateGame(){
-
+        Log.i("GameActivity", "Oncreategame");
+            RunningGame newGame = new RunningGame();
+            mManager = getSupportFragmentManager();
+            fragTransaction = mManager.beginTransaction();
+            fragTransaction.add(R.id.ui_fragment,newGame);
+            fragTransaction.commit();
     }
 
     public void onJoinGame(){
