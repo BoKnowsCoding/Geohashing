@@ -81,8 +81,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     @Override
                     public void onComplete(@NonNull Task<Location> task) {
                         if (task.isSuccessful()) {
-                            double randomlat = Math.random() * .01 - .08;
-                            double randomlong = Math.random() * .01 - .08;
+                            double randomlat = Math.random() *.002 -.001;
+                            double randomlong = Math.random() *.002 -.001;
                             mLastKnownLocation = task.getResult();
                             Map<String, Object> data = new HashMap<>();
                             double lat = mLastKnownLocation.getLatitude() + randomlat;
