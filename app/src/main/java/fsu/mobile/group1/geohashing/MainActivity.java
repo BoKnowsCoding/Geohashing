@@ -20,6 +20,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -40,6 +47,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
   //  private FirebaseAuth mAuth;
     private GoogleApiClient mClient;
     private GoogleSignInClient mGoogleSignIn;
+    private CallbackManager callbackManager;
     //private FirebaseDatabase mFirebaseDatabase;
     //private DatabaseReference mDatabaseReference;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -101,15 +110,20 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         */
         //Just gonna check perms programatically
 
+
+
         // forwards the user directly to GameActivity if they signed in in a previous session
-        GoogleSignInAccount user = GoogleSignIn.getLastSignedInAccount(this);
-        if (user != null) {
+        GoogleSignInAccount googleUser = GoogleSignIn.getLastSignedInAccount(this);
+        if (googleUser != null) {
             Intent intent = new Intent(this, GameActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }
-
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        if(accessToken != null && !accessToken.isExpired()){
+            LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+        }
         checkReadPermissions();
         displayLogin();
     }
@@ -163,12 +177,38 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         startActivityForResult(signInIntent, 1000);
     }
 
+    public void onFacebookSignIn(){
+        callbackManager = CallbackManager.Factory.create();
+        Log.i("MainActivity", "in onFacebookSignIn()");
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.i("MainActivity", "in onSuccess");
+                updateUI(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+                Toast.makeText(getApplicationContext(), "Facebook login cancelled", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Toast.makeText(getApplicationContext(), "Facebook login error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     //after the user has signed in using their email this will call updateUI which will launch the MapsActivity
     @Override
     public void onActivityResult(int RequestCode, int resultCode, Intent data){
         super.onActivityResult(RequestCode, resultCode, data);
-        Task<GoogleSignInAccount> task= GoogleSignIn.getSignedInAccountFromIntent(data);
-        updateUI(task);
+        if(RequestCode == 1000) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            updateUI(task);
+        } else{
+            callbackManager.onActivityResult(RequestCode, resultCode, data);
+        }
 
     }
 
@@ -185,6 +225,12 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
             Log.i("MainActivity", "Exception");
             }
 
+    }
+
+    public void updateUI(AccessToken aToken){
+        Intent intent = new Intent(MainActivity.this, GameActivity.class);
+        intent.putExtra("fb_user_id",aToken.getUserId());
+        startActivity(intent);
     }
 
     //Adds a FirebaseUser entry to Firebase database (JSON Datbase) called when registering or logging in
