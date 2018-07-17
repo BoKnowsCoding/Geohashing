@@ -30,6 +30,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -57,6 +59,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private double goalLat;
     private double goalLong;
     FusedLocationProviderClient mFusedLocationClient;
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
+    //private Map<String, Object> userMap;
+    private int localGameScore;
     private static final int DEFAULT_ZOOM = 15;
 
     @Override
@@ -65,11 +71,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        localGameScore = 0;
     }
 
 
@@ -142,12 +150,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 //move map camera
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11));
+
+                if(distanceFromGoal(goalLat, goalLong, location.getLatitude(), location.getLongitude()) < 5.0){
+                    localGameScore++;
+                    if(localGameScore > 4){
+
+                    }
+                }
+
                // db.collection(gameName).document("playerList").collection("players").document(curPlayer).update("lat", location.getLatitude());
                 //db.collection(gameName).document("playerList").collection("players").document(curPlayer).update("long", location.getLongitude());
 
             }
         }
     };
+
+    public double distanceFromGoal(double lat1, double long1, double lat2, double long2){
+        double earthRadius = 6371000.0;
+        double latRad1 = Math.toRadians(lat1), longRad1 = Math.toRadians(long1), latRad2 = Math.toRadians(lat2), longRad2 = Math.toRadians(long2);
+        double firstPart = (1.0 - Math.cos(latRad2-latRad1))/2.0;
+        double secondPart = (Math.cos(latRad1) * Math.cos(latRad2) * (1.0 - Math.cos(longRad2-longRad1))/2.0);
+        double mainPart = firstPart + secondPart;
+        return earthRadius * Math.acos(1.0-(mainPart * 2.0));
+    }
 
     /**
      * Manipulates the map once available.
@@ -178,7 +203,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshots) {
                 Map<String,Object> node = documentSnapshots.getData();
-                Log.i("MapsActivyt",node.get("lat").toString() + " " + node.get("long").toString());
+                Log.i("MapsActivity",node.get("lat").toString() + " " + node.get("long").toString());
                 goalLat = Double.parseDouble(node.get("lat").toString());
                 goalLong = Double.parseDouble(node.get("long").toString());
 

@@ -45,7 +45,7 @@ public class RunningGame extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             Bundle savedInstanceState){
         Log.i("RunningGame","onCreateView");
         View rootView = inflater.inflate(R.layout.fragment_running_game, container, false);
 
