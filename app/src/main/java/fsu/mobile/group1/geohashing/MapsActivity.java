@@ -28,6 +28,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,6 +36,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -47,7 +49,14 @@ import java.util.Map;
 //import static fsu.mobile.group1.geohashing.GameActivity.curPlayer;
 import static fsu.mobile.group1.geohashing.GameActivity.gameName;
 
-
+/* TODO:
+Implement the join game screen
+Send user to some sort of waiting screen after they join a game
+For game creator, give them ability to start game whenever, which removes
+it from the join game list
+When a user wins, send out a notification to the peeps, then i guess return to
+the GameActivity screen
+ */
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private GoogleMap mMap;
@@ -116,11 +125,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             double randomlat = Math.random() *.002 -.001;
                             double randomlong = Math.random() *.002 -.001;
                             mLastKnownLocation = task.getResult();
-                            Map<String, Object> data = new HashMap<>();
+                            Map<String, String> data = new HashMap<>();
                             double lat = mLastKnownLocation.getLatitude() + randomlat;
                             double lng = mLastKnownLocation.getLongitude() + randomlong;
-                            data.put("lat", lat);
-                            data.put("long", lng);
+                            data.put("lat", String.valueOf(lat));
+                            data.put("long", String.valueOf(lng));
                             Log.i("MapsActivity", "Lat: " + lat );
                             Log.i("MapsActivity", "lng: " + lng );
                             db.collection(gameName).document("nodeList").collection("nodes").document("curNode")
@@ -177,7 +186,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if(distanceFromGoal(goalLat, goalLong, location.getLatitude(), location.getLongitude()) < 5.0){
                     localGameScore++;
                     if(localGameScore > 4){
-
+                        DocumentReference docRef = db.collection("users").document(currentUser.getUid());
+                        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        userMap = document.getData();
+                                        int overallScore = (Integer) userMap.get("score");
+                                        overallScore++;
+                                        userMap.put("score",overallScore);
+                                        db.collection("users").document(currentUser.getUid())
+                                                .set(userMap)
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("MapsActivity", "DocumentSnapshot successfully written!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("MapsActivity", "Error writing document", e);
+                                                    }
+                                                });
+                                    } else {
+                                        Log.d("MapsActivity", "No such document");
+                                    }
+                                } else {
+                                    Log.d("MapsActivity", "get failed with ", task.getException());
+                                }
+                            }
+                        });
+                        Map<String,Object> winMap = new HashMap<>();
+                        winMap.put("WIN","Y");
+                        db.collection(gameName).document("wins").set(winMap);
                     }
                 }
 
@@ -240,6 +284,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }});
 
 
+        DocumentReference winDocRef = db.collection(gameName).document("wins");
+        winDocRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    System.err.println("Listen failed: " + e);
+                    return;
+                }
+
+                if (snapshot != null && snapshot.exists()) {
+                    Map<String,Object> win = snapshot.getData();
+                    String yesWin = (String)win.get("WIN");
+                    if(yesWin.equals("Y")){
+                        // NOTIFICATION HERE
+                    }
+
+                } else {
+
+                }
+            }
+        });
 
 
         DocumentReference docRef = db.collection(gameName).document("nodeList").collection("nodes").document("curNode");
@@ -275,6 +341,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    public void deleteFromDocRef(DocumentReference dr, String key){
+        Map<String,Object> remove = new HashMap<>();
+        remove.put(key,FieldValue.delete());
+        dr.update(remove);
+    }
 
 
 
