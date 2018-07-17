@@ -39,7 +39,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         setContentView(R.layout.activity_game);
 
         mToolbar = (Toolbar) findViewById(R.id.action_bar);
-
+        gameName = "GameTest"; //tb removed later
 //        getSupportActionBar().hide();
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -48,9 +48,11 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         mFBLoginManager = LoginManager.getInstance();
         // Access a Cloud Firestore instance from your Activity
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        //onCreateGame();
+        //onCreateGame(); //for testing purposes
         renderUI();
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

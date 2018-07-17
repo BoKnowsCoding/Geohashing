@@ -6,6 +6,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -30,7 +32,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -48,6 +52,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Location mLastKnownLocation;
     Location mLastLocation;
     Marker mCurrLocationMarker;
+    Marker nodeLocationMarker;
     private double goalLat;
     private double goalLong;
     FusedLocationProviderClient mFusedLocationClient;
@@ -167,33 +172,57 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //LatLng sydney = new LatLng(-34, 151);
         //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        createNextNode();
+        createNextNode(); //needs to be removed later
         db.collection(gameName).document("nodeList").collection("nodes").document("curNode").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshots) {
                 Map<String,Object> node = documentSnapshots.getData();
                 Log.i("MapsActivyt",node.get("lat").toString() + " " + node.get("long").toString());
+                goalLat = Double.parseDouble(node.get("lat").toString());
+                goalLong = Double.parseDouble(node.get("long").toString());
+
+                LatLng latLng = new LatLng(goalLat, goalLong);
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(latLng);
+                markerOptions.title("Goal!");
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                nodeLocationMarker = mMap.addMarker(markerOptions);
 
         }});
 
 
-        /*
-        db.collection(gameName).document("nodeList").collection("nodes")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("MapsFragment", document.getId() + " => " + document.getData());
 
-                            }
-                        } else {
-                            Log.d("MapsFragment", "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
-        */
+
+        DocumentReference docRef = db.collection(gameName).document("nodeList").collection("nodes").document("curNode");
+        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    System.err.println("Listen failed: " + e);
+                    return;
+                }
+
+                if (snapshot != null && snapshot.exists()) {
+
+                    Map<String,Object> node = snapshot.getData();
+                    Log.i("MapsActivity",node.get("lat").toString() + " " + node.get("long").toString());
+                    goalLat = Double.parseDouble(node.get("lat").toString());
+                    goalLong = Double.parseDouble(node.get("long").toString());
+                    nodeLocationMarker.remove();
+                    LatLng latLng = new LatLng(goalLat, goalLong);
+                    MarkerOptions markerOptions = new MarkerOptions();
+                    markerOptions.position(latLng);
+                    markerOptions.title("Goal!");
+                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                    nodeLocationMarker = mMap.addMarker(markerOptions);
+
+                } else {
+                    System.out.print("Current data: null");
+                }
+            }
+        });
+
 
     }
 
