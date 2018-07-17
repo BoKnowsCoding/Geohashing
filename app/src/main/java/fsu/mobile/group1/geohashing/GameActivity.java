@@ -21,7 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 //This is the activity where we will base everything game related
 //We will launch the MapsActivity Fragment from here as well as any other fragments needed to support the game
 public class GameActivity extends AppCompatActivity implements GameUIFragment.UiListener {
-
+    public static String gameName;
     private Toolbar mToolbar;
     private FragmentManager mManager;
     private FragmentTransaction fragTransaction;
