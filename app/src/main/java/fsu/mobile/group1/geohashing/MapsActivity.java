@@ -61,6 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     FusedLocationProviderClient mFusedLocationClient;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
+    Map<String, Object> userMap;
     //private Map<String, Object> userMap;
     private int localGameScore;
     private static final int DEFAULT_ZOOM = 15;
@@ -70,8 +71,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.i("MapsActivity","onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+
+        //THIS IS FOR GETTING STUFF FROM DATABASE
         mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
+        userMap = new HashMap<>();
+
         db = FirebaseFirestore.getInstance();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -79,6 +84,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         localGameScore = 0;
     }
+    /*
+    DocumentReference docRef = db.collection("users").document(currentUser.getUid());
+    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+    @Override
+    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+        if (task.isSuccessful()) {
+            DocumentSnapshot document = task.getResult();
+            if (document.exists()) {
+                map = document.getData();
+            } else {
+                Log.d(TAG, "No such document");
+            }
+        } else {
+            Log.d(TAG, "get failed with ", task.getException());
+        }
+    }
+});
+     */
 
 
     private void createNextNode() {

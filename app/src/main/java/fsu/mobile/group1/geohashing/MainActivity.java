@@ -202,16 +202,16 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                     if (task.isSuccessful()) {
                                         DocumentSnapshot document = task.getResult();
+                                        FirebaseUser nUser = mAuth.getCurrentUser();
 
                                         if (document != null) {
                                             //The user exists don't need to add him
-                                            //updateUI(user);
+                                            updateUI(nUser);
                                         }
 
 
                                         else {
                                             //This stores a non existent user into our database
-                                            FirebaseUser nUser = mAuth.getCurrentUser();
                                             //The user doesn't exist so we add him
                                             Map<String, Object> userObj = new HashMap<>();
                                             userObj.put("displayName", nUser.getDisplayName());
@@ -230,7 +230,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                                                         public void onFailure(@NonNull Exception e) {
                                                             Log.w(TAG, "Error writing document", e);
                                                         }
-                                                    });//updateUI(user)
+                                                    });
+                                            updateUI(nUser);
                                         }
 
                                     }
@@ -241,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(MainActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
+                            updateUI(null);
                         }
 
                         // ...
@@ -288,16 +289,15 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                     if (task.isSuccessful()) {
                                         DocumentSnapshot document = task.getResult();
+                                        FirebaseUser nUser = mAuth.getCurrentUser();
 
                                         if (document != null) {
                                             //The user exists don't need to add him
-                                            //updateUI(user);
+                                            updateUI(nUser);
                                         }
 
 
                                         else {
-                                            //This stores a non existent user into our database
-                                            FirebaseUser nUser = mAuth.getCurrentUser();
                                             //The user doesn't exist so we add him
                                             Map<String, Object> userObj = new HashMap<>();
                                             userObj.put("displayName", nUser.getDisplayName());
@@ -316,7 +316,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                                                         public void onFailure(@NonNull Exception e) {
                                                             Log.w(TAG, "Error writing document", e);
                                                         }
-                                                    });//updateUI(user)
+                                                    });
+                                            updateUI(nUser);
                                         }
 
                                     }
@@ -327,7 +328,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(MainActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
+                            updateUI(null);
                         }
 
                         // ...
@@ -335,26 +336,13 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                 });
     }
 
-    //starts the MapsActivity
-    public void updateUI(Task<GoogleSignInAccount> task){
-        try{
-            GoogleSignInAccount account=task.getResult(ApiException.class);
-            Intent intent=new Intent(MainActivity.this, GameActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            //need to add the task to the UI
-            startActivity(intent);
-        }
-        catch (ApiException e){
-            Log.i("MainActivity", "Exception");
-            }
-
-    }
-
-    public void updateUI(AccessToken aToken){
+    public void updateUI(FirebaseUser mUser)
+    {
         Intent intent = new Intent(MainActivity.this, GameActivity.class);
-        intent.putExtra("fb_user_id",aToken.getUserId());
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
+
 
     //If there's any more permissions you need just copy and paste one of these and substitute
     public void checkReadPermissions()
