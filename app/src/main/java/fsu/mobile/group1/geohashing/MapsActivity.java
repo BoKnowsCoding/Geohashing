@@ -45,6 +45,7 @@ import java.util.Map;
 //import static fsu.mobile.group1.geohashing.GameActivity.curPlayer;
 import static fsu.mobile.group1.geohashing.GameActivity.gameName;
 
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private GoogleMap mMap;

@@ -15,8 +15,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 /*
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,7 +39,7 @@ import com.google.firebase.database.ValueEventListener;
 public class LoginFragment extends Fragment implements View.OnClickListener {
 
     private String TAG = "LoginFragment";
-
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
     public interface LoginListener{
     void onSignIn(Bundle bundle);
     void onGoogleSignIn();
@@ -47,6 +52,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private EditText mUser;
     private EditText mPassword;
     private com.facebook.login.widget.LoginButton mFacebook;
+    Map<String, Object> user;
 
 //    private FirebaseAuth mAuth;
 
@@ -65,17 +71,21 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_login, container, false);
 
+        //For facebook and google
+        mFacebook = root.findViewById(R.id.facebook_sign_in_button);
+        mFacebook.setReadPermissions("email", "public_profile");
+
         /*set the id's of Buttons and EditTexts*/
         mLogin=root.findViewById(R.id.sign_in);
         mRegister=root.findViewById(R.id.register);
         mGoogle=root.findViewById(R.id.sign_in_button);
-        mUser=root.findViewById(R.id.username);
+        mUser=root.findViewById(R.id.email);
         mPassword=root.findViewById(R.id.password);
-        mFacebook = root.findViewById(R.id.facebook_sign_in_button);
         mGoogle.setOnClickListener(this);
         mFacebook.setOnClickListener(this);
         mLogin.setOnClickListener(this);
         mRegister.setOnClickListener(this);
+
         return root;
     }
 
@@ -94,12 +104,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v){
         Log.i("test","onClick function called");
         Bundle bundle=new Bundle();
-        String user;
+        String email;
         String pass;
         //calls appropriate interface method based on which button has been clicked
         if(v==mLogin){
-            //package up user and password in bundle and pass to sign-in method
-            user=mUser.getText().toString();
+            //package up email and password in bundle and pass to sign-in method
+            email=mUser.getText().toString();
             pass=mPassword.getText().toString();
             /*
             bundle.putString("user", user);

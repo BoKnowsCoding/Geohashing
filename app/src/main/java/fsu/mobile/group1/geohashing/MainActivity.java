@@ -7,16 +7,15 @@ package fsu.mobile.group1.geohashing;
 * Udacity Firebase Course
 * */
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -24,7 +23,6 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.Auth;
@@ -32,24 +30,32 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.internal.GoogleSignInOptionsExtensionParcelable;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-//import com.google.firebase.auth.FirebaseAuth;
-//import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 //import com.google.firebase.database.DataSnapshot;
 //import com.google.firebase.database.DatabaseError;
 //import com.google.firebase.database.DatabaseReference;
 //import com.google.firebase.database.FirebaseDatabase;
 //import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity implements LoginFragment.LoginListener, GoogleApiClient.OnConnectionFailedListener{
@@ -64,10 +70,11 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
 
     private FragmentManager mManager;
     private FragmentTransaction fragTransaction;
-  //  private FirebaseAuth mAuth;
+    private FirebaseAuth mAuth;                     //don't delete
     private GoogleApiClient mClient;
     private GoogleSignInClient mGoogleSignIn;
     private CallbackManager callbackManager;
+    private FirebaseUser currentUser;
     //private FirebaseDatabase mFirebaseDatabase;
     //private DatabaseReference mDatabaseReference;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -78,37 +85,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //mAuth=FirebaseAuth.getInstance();       //initialize firebase variable
-        // mFirebaseDatabase=FirebaseDatabase.getInstance();   //initialize database reference
-        //mDatabaseReference=mFirebaseDatabase.getReference(FIREBASE_TABLE); //get references
-
-
-
-        // Access a Cloud Firestore instance from your Activity
-
-
-        /*Right now this does nothing but I think this is what we would use
-        to update the map when their last known location changes. What this
-        does is gives us a DataSnapchat to work with whenever something in
-        our database changes. Not sure if we need this but we'll see*/
-        /*
-        mDatabaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-                    MyUser user = dataSnapshot.getValue(MyUser.class);
-                    Log.d(TAG, "User changed is: " + user.getUserName());
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-        */
-        //Just gonna check perms programatically
+        mAuth = FirebaseAuth.getInstance();       //don't delete
 
 
 
@@ -122,10 +99,19 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         }
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         if(accessToken != null && !accessToken.isExpired()){
-            LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+                LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
         }
         checkReadPermissions();
         displayLogin();
+    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        //updateUI(currentUser);
     }
 
     //add login fragment to ui
@@ -143,8 +129,6 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
     }
 
     public void onSignIn(Bundle bundle){
-        //FirebaseDatabase database = FirebaseDatabase.getInstance();
-        //DatabaseReference myRef = database.getReference();
         String user = bundle.getString("user");
         String pass= bundle.getString("pass");
 
@@ -184,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.i("MainActivity", "in onSuccess");
-                updateUI(loginResult.getAccessToken());
+                handleFacebookAccessToken(loginResult.getAccessToken());
             }
 
             @Override
@@ -199,17 +183,142 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         });
     }
 
+    private void handleFacebookAccessToken(AccessToken token) {
+        Log.d(TAG, "handleFacebookAccessToken:" + token);
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+
+                            final DocumentReference userRef = db.collection("users").document(user.getUid());
+                            userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        DocumentSnapshot document = task.getResult();
+
+                                        if (document != null) {
+                                            //The user exists don't need to add him
+                                            //updateUI(user);
+                                        }
+
+
+                                        else {
+                                            //This stores a non existent user into our database
+                                            FirebaseUser nUser = mAuth.getCurrentUser();
+                                            //The user doesn't exist so we add him
+                                            Map<String, Object> userObj = new HashMap<>();
+                                            userObj.put("displayName", nUser.getDisplayName());
+                                            userObj.put("email", nUser.getEmail());
+                                            userObj.put("score", 0);
+                                            db.collection("users").document(nUser.getUid())
+                                                    .set(userObj)
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            Log.d(TAG, "DocumentSnapshot successfully written!");
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Log.w(TAG, "Error writing document", e);
+                                                        }
+                                                    });//updateUI(user)
+                                        }
+
+                                    }
+                                }
+                        });
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(MainActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                            //updateUI(null);
+                        }
+
+                        // ...
+                    }
+                });
+    }
+
     //after the user has signed in using their email this will call updateUI which will launch the MapsActivity
     @Override
     public void onActivityResult(int RequestCode, int resultCode, Intent data){
         super.onActivityResult(RequestCode, resultCode, data);
         if(RequestCode == 1000) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            updateUI(task);
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                firebaseAuthWithGoogle(account);
+            } catch (ApiException e) {
+                // Google Sign In failed, update UI appropriately
+                Log.w(TAG, "Google sign in failed", e);
+            }
         } else{
             callbackManager.onActivityResult(RequestCode, resultCode, data);
         }
 
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
+
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        /*if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            //DocumentSnapshot document = task.getResult();
+
+                            if (document != null) {
+                                //The user exists don't need to add him
+                                //updateUI(user);
+                            }
+
+
+                            else {
+                                //This stores a non existent user into our database
+                                FirebaseUser nUser = mAuth.getCurrentUser();
+                                //The user doesn't exist so we add him
+                                Map<String, Object> userObj = new HashMap<>();
+                                userObj.put("displayName", nUser.getDisplayName());
+                                userObj.put("email", nUser.getEmail());
+                                userObj.put("score", 0);
+                                db.collection("users").document(nUser.getUid())
+                                        .set(userObj)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d(TAG, "DocumentSnapshot successfully written!");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w(TAG, "Error writing document", e);
+                                            }
+                                        });//updateUI(user)
+                            }
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            //updateUI(null);
+                        }*/
+
+                        // ...
+                    }
+                });
     }
 
     //starts the MapsActivity
@@ -233,26 +342,6 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         startActivity(intent);
     }
 
-    //Adds a FirebaseUser entry to Firebase database (JSON Datbase) called when registering or logging in
-    //^obvs check when logging in if there's someone in the database
-    /*
-    public static void saveToDatabase(FirebaseUser acct) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference();
-
-
-        //Gonna need to figure out how lastknownloc will be saved and updated, for now empty string
-        MyUser user = new MyUser(acct.getDisplayName(), "", 0);
-
-
-        myRef.child(acct.getUid()).setValue(user);
-        Map<String, Object> postValues = user.toMap();
-
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/" + FIREBASE_TABLE + "/" + acct.getUid(), postValues);
-        myRef.updateChildren(childUpdates);
-    }
-*/
     //If there's any more permissions you need just copy and paste one of these and substitute
     public void checkReadPermissions()
     {

@@ -24,7 +24,7 @@
         android:onClick="onClick" />
 
     <EditText
-        android:id="@+id/username"
+        android:id="@+id/email"
         android:layout_width="211dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -34,8 +34,7 @@
         android:ems="10"
         android:hint="Email"
         android:inputType="textEmailAddress"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:visibility="invisible" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <EditText
         android:id="@+id/password"
@@ -48,8 +47,7 @@
         android:ems="10"
         android:hint="Password"
         android:inputType="textPassword"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:visibility="invisible" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
         android:id="@+id/textView"
@@ -70,8 +68,7 @@
         android:layout_marginBottom="100dp"
         android:background="@color/colorWhite"
         android:clickable="false"
-        android:text="Sign-In"
-        android:visibility="invisible" />
+        android:text="Sign-In" />
 
     <Button
         android:id="@+id/register"
@@ -81,9 +78,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="-75dp"
         android:background="@color/colorWhite"
-        android:clickable="false"
-        android:text="Register"
-        android:visibility="invisible" />
+        android:text="Register" />
 
     <TextView
         android:id="@+id/reg_text"
@@ -93,7 +88,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="75dp"
         android:clickable="false"
-        android:text="No Account?"
-        android:visibility="invisible" />
+        android:text="No Account?" />
 
 </RelativeLayout>
