@@ -64,7 +64,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    private void getDeviceLocation() {
+    private void createNextNode() {
         /*
          * Get the best and most recent location of the device, which may be null in rare
          * cases when a location is not available.
@@ -76,11 +76,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     @Override
                     public void onComplete(@NonNull Task<Location> task) {
                         if (task.isSuccessful()) {
-                            // Set the map's camera position to the current location of the device.
-                            mLastKnownLocation = task.getResult();
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                    new LatLng(mLastKnownLocation.getLatitude(),
-                                            mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+                            double randomlat = Math.random() * .01 - .08;
+                            double randomlong = Math.random() * .01 - .08;
+
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("lat", mLastKnownLocation.getLatitude() + randomlat);
+                            data.put("long", mLastKnownLocation.getLongitude() + randomlong);
+                            db.collection(gameName).document("nodeList").collection("nodes").document("curNode")
+                                    .set(data);
+
                         }
 
                     }
@@ -101,6 +105,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mFusedLocationClient.removeLocationUpdates(mLocationCallback);
         }
     }
+    //this code keeps the cameria centered on you
     //https://stackoverflow.com/questions/44992014/how-to-get-current-location-in-googlemap-using-fusedlocationproviderclient
     LocationCallback mLocationCallback = new LocationCallback() {
         @Override
