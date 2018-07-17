@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -26,6 +27,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
     private FragmentManager mManager;
     private FragmentTransaction fragTransaction;
     private GoogleSignInClient mGoogleSignInClient;
+    LoginManager mFBLoginManager;
     GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
             .build();
@@ -42,7 +44,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
-
+        mFBLoginManager = LoginManager.getInstance();
         // Access a Cloud Firestore instance from your Activity
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         renderUI();
@@ -100,6 +102,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
                         startActivity(intent);
                     }
                 });
+        mFBLoginManager.logOut();
     }
 
 
