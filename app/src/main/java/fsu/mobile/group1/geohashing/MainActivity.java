@@ -58,11 +58,14 @@ import java.util.Map;
 //import com.google.firebase.database.ValueEventListener;
 
 
-public class MainActivity extends AppCompatActivity implements LoginFragment.LoginListener, GoogleApiClient.OnConnectionFailedListener{
+public class MainActivity extends AppCompatActivity implements LoginFragment.LoginListener,
+        GoogleApiClient.OnConnectionFailedListener{
     private static final String TAG = MainActivity.class.getCanonicalName();
     //Id codes for permission checks
-    static final int MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE = 3, MY_PERMISSIONS_REQUEST_INTERNET = 4,
-            MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 5, MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 20;
+    static final int MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE = 3,
+            MY_PERMISSIONS_REQUEST_INTERNET = 4,
+            MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 5,
+            MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 20;
 
     //Name of our firebase table
     public static final String FIREBASE_TABLE = "users";
@@ -99,7 +102,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         }
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         if(accessToken != null && !accessToken.isExpired()){
-                LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+                LoginManager.getInstance().logInWithReadPermissions(this,
+                        Arrays.asList("public_profile"));
         }
         checkReadPermissions();
         displayLogin();
@@ -164,7 +168,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
     public void onFacebookSignIn(){
         callbackManager = CallbackManager.Factory.create();
         Log.i("MainActivity", "in onFacebookSignIn()");
-        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        LoginManager.getInstance().registerCallback(callbackManager,
+                new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.i("MainActivity", "in onSuccess");
@@ -173,12 +178,14 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
 
             @Override
             public void onCancel() {
-                Toast.makeText(getApplicationContext(), "Facebook login cancelled", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Facebook login cancelled",
+                        Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onError(FacebookException error) {
-                Toast.makeText(getApplicationContext(), "Facebook login error", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Facebook login error",
+                        Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -196,7 +203,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
-                            final DocumentReference userRef = db.collection("users").document(user.getUid());
+                            final DocumentReference userRef = db.collection("users")
+                                    .document(user.getUid());
                             userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -250,7 +258,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                 });
     }
 
-    //after the user has signed in using their email this will call updateUI which will launch the MapsActivity
+    //after the user has signed in using their email this will call updateUI
+    // which will launch the MapsActivity
     @Override
     public void onActivityResult(int RequestCode, int resultCode, Intent data){
         super.onActivityResult(RequestCode, resultCode, data);
@@ -283,7 +292,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
-                            final DocumentReference userRef = db.collection("users").document(user.getUid());
+                            final DocumentReference userRef = db.collection("users")
+                                    .document(user.getUid());
                             userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -347,22 +357,26 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
     //If there's any more permissions you need just copy and paste one of these and substitute
     public void checkReadPermissions()
     {
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_NETWORK_STATE)
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_NETWORK_STATE)
                 != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_NETWORK_STATE},
                     MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE);
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.INTERNET)
+        if (ContextCompat.checkSelfPermission(this
+                , android.Manifest.permission.INTERNET)
                 != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.INTERNET},
                     MY_PERMISSIONS_REQUEST_INTERNET);
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE)
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.READ_PHONE_STATE)
                 != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.READ_PHONE_STATE},
