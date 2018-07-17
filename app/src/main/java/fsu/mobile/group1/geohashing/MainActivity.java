@@ -277,44 +277,58 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        /*if (task.isSuccessful()) {
+                        if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            //DocumentSnapshot document = task.getResult();
+                            Log.d(TAG, "signInWithCredential:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
 
-                            if (document != null) {
-                                //The user exists don't need to add him
-                                //updateUI(user);
-                            }
+                            final DocumentReference userRef = db.collection("users").document(user.getUid());
+                            userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        DocumentSnapshot document = task.getResult();
+
+                                        if (document != null) {
+                                            //The user exists don't need to add him
+                                            //updateUI(user);
+                                        }
 
 
-                            else {
-                                //This stores a non existent user into our database
-                                FirebaseUser nUser = mAuth.getCurrentUser();
-                                //The user doesn't exist so we add him
-                                Map<String, Object> userObj = new HashMap<>();
-                                userObj.put("displayName", nUser.getDisplayName());
-                                userObj.put("email", nUser.getEmail());
-                                userObj.put("score", 0);
-                                db.collection("users").document(nUser.getUid())
-                                        .set(userObj)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                Log.d(TAG, "DocumentSnapshot successfully written!");
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.w(TAG, "Error writing document", e);
-                                            }
-                                        });//updateUI(user)
-                            }
+                                        else {
+                                            //This stores a non existent user into our database
+                                            FirebaseUser nUser = mAuth.getCurrentUser();
+                                            //The user doesn't exist so we add him
+                                            Map<String, Object> userObj = new HashMap<>();
+                                            userObj.put("displayName", nUser.getDisplayName());
+                                            userObj.put("email", nUser.getEmail());
+                                            userObj.put("score", 0);
+                                            db.collection("users").document(nUser.getUid())
+                                                    .set(userObj)
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            Log.d(TAG, "DocumentSnapshot successfully written!");
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Log.w(TAG, "Error writing document", e);
+                                                        }
+                                                    });//updateUI(user)
+                                        }
+
+                                    }
+                                }
+                            });
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(MainActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
                             //updateUI(null);
-                        }*/
+                        }
 
                         // ...
                     }
