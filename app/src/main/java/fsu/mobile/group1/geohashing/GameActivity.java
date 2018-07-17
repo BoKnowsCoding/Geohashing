@@ -22,7 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 //This is the activity where we will base everything game related
 //We will launch the MapsActivity Fragment from here as well as any other fragments needed to support the game
 public class GameActivity extends AppCompatActivity implements GameUIFragment.UiListener {
-
+    public static String gameName;
     private Toolbar mToolbar;
     private FragmentManager mManager;
     private FragmentTransaction fragTransaction;
@@ -88,6 +88,15 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
     //retrieves and lists the current games that are available to join
     public void getGames(){
 
+    }
+
+    public void startGame()
+    {
+       FragmentManager fm = getSupportFragmentManager();
+        RunningGame fragment = new RunningGame();
+        fm.beginTransaction().add(R.id.ui_fragment,fragment).commit();
+        //so that loaded up the map fragment into the main one here
+        //then we need to attach all the listeners which will implement game logic
     }
 
     private void signOut() {
