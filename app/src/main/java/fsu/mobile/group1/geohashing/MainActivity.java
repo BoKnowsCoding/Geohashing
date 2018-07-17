@@ -78,8 +78,6 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
     private GoogleSignInClient mGoogleSignIn;
     private CallbackManager callbackManager;
     private FirebaseUser currentUser;
-    //private FirebaseDatabase mFirebaseDatabase;
-    //private DatabaseReference mDatabaseReference;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
@@ -90,16 +88,12 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();       //don't delete
 
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        mGoogleSignIn = GoogleSignIn.getClient(this, gso);
 
-
-        // forwards the user directly to GameActivity if they signed in in a previous session
-        GoogleSignInAccount googleUser = GoogleSignIn.getLastSignedInAccount(this);
-        if (googleUser != null) {
-            Intent intent = new Intent(this, GameActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        }
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         if(accessToken != null && !accessToken.isExpired()){
                 LoginManager.getInstance().logInWithReadPermissions(this,
@@ -115,7 +109,16 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         super.onStart();
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        //updateUI(currentUser);
+        if (currentUser != null)
+            updateUI(currentUser);
+        // forwards the user directly to GameActivity if they signed in in a previous session
+        GoogleSignInAccount googleUser = GoogleSignIn.getLastSignedInAccount(this);
+        if (googleUser != null) {
+            Intent intent = new Intent(this, GameActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        }
     }
 
     //add login fragment to ui
@@ -132,16 +135,68 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         Toast.makeText(getApplicationContext(), "Connection Failed", Toast.LENGTH_SHORT).show();
     }
 
-    public void onSignIn(Bundle bundle){
-        String user = bundle.getString("user");
-        String pass= bundle.getString("pass");
+    public void onSignIn(String email, String password){
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
 
-        /*^^^DONT NEED THIS ANYMORE BECAUSE IT WILL BE HANDLED BY LOGIN AND REGISTER FRAGMENTS JUST
-        TO CHANGE ACTIVITIES*/
+                            final DocumentReference userRef = db.collection("users").document(user.getUid());
+                            userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        DocumentSnapshot document = task.getResult();
+                                        FirebaseUser nUser = mAuth.getCurrentUser();
+                                        if (document != null) {
+                                            //The user exists don't need to add him
+                                            updateUI(nUser);
+                                        }
+
+
+                                        else {
+                                            //This stores a non existent user into our database
+                                            //The user doesn't exist so we add him
+                                            Map<String, Object> userObj = new HashMap<>();
+                                            userObj.put("displayName", nUser.getDisplayName());
+                                            userObj.put("email", nUser.getEmail());
+                                            userObj.put("score", 0);
+                                            db.collection("users").document(nUser.getUid())
+                                                    .set(userObj)
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            Log.d(TAG, "DocumentSnapshot successfully written!");
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Log.w(TAG, "Error writing document", e);
+                                                        }
+                                                    });
+                                            updateUI(nUser);
+                                        }
+
+                                    }
+                                }
+                            });
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(MainActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                        // ...
+                    }
+                });
         Intent intent = new Intent(MainActivity.this, GameActivity.class);
         startActivity(intent);
-
-
     }
 
     //set the google sign in--if the button gets pushed more than once, we crash...
@@ -150,17 +205,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         Toast.makeText(getApplicationContext(),
                 "Google Sign In Button Pushed", Toast.LENGTH_SHORT).show();
 
-        //create a google sign in options variable
-        GoogleSignInOptions gso=new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build();
-        mClient=new GoogleApiClient.Builder(this)
-                .enableAutoManage(MainActivity.this, this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso).build(); //create a new Google API Client
-        mGoogleSignIn=GoogleSignIn.getClient(this, gso);
-
         //create signIn intent
         Intent signInIntent=mGoogleSignIn.getSignInIntent();
-
         //start the the activity to the sign in the user
         startActivityForResult(signInIntent, 1000);
     }
@@ -250,7 +296,6 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(MainActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            updateUI(null);
                         }
 
                         // ...
@@ -274,13 +319,14 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                 Log.w(TAG, "Google sign in failed", e);
             }
         } else{
-            callbackManager.onActivityResult(RequestCode, resultCode, data);
+            //callbackManager.onActivityResult(RequestCode, resultCode, data);
         }
 
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
+
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -338,7 +384,6 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(MainActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            updateUI(null);
                         }
 
                         // ...
@@ -350,6 +395,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
     {
         Intent intent = new Intent(MainActivity.this, GameActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        if (mUser != null)
+            intent.putExtra("userId", mUser.getUid());
         startActivity(intent);
     }
 

@@ -41,7 +41,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private String TAG = "LoginFragment";
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     public interface LoginListener{
-    void onSignIn(Bundle bundle);
+    void onSignIn(String email, String password);
     void onGoogleSignIn();
     void onFacebookSignIn();
     }
@@ -109,14 +109,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         //calls appropriate interface method based on which button has been clicked
         if(v==mLogin){
             //package up email and password in bundle and pass to sign-in method
-            email=mUser.getText().toString();
-            pass=mPassword.getText().toString();
-            /*
-            bundle.putString("user", user);
-            bundle.putString("pass", pass);
-            loginListener.onSignIn(bundle);
-            */
-            //onSignIn(user,pass);
+            email = mUser.getText().toString();
+            pass = mPassword.getText().toString();
+
+            loginListener.onSignIn(email,pass);
         }
         else if(v==mGoogle) {
             loginListener.onGoogleSignIn();
@@ -135,51 +131,5 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         }
 
     }
-/*
-    private void onSignIn(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            //CHECKING OUR DATABASE FOR USER, ADD THEM IF DOESN'T EXIST YET
-                            FirebaseDatabase database = FirebaseDatabase.getInstance();
-                            DatabaseReference myRef = database.getReference("users");
-                            //Users are stored with uIds automatically
-                            myRef.child(user.getUid()).addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    //This user literally exists cuz since this is an inner class id have to declare user
-                                    //final to save to database and screw that
-                                    FirebaseUser userForNestedClass = mAuth.getCurrentUser();
-                                    //If user doesn't exist we'll add it to our database otherwise we'll continue on
-                                    if(!dataSnapshot.exists())
-                                    {
-                                        MainActivity.saveToDatabase(userForNestedClass);
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-                            updateUI(user);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(getActivity(), "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            updateUI(null);
-                        }
-
-                        // ...
-                    }
-                });
-    }
-*/
 
 }
