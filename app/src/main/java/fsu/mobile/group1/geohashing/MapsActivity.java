@@ -1,6 +1,7 @@
 package fsu.mobile.group1.geohashing;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -299,6 +300,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     String yesWin = (String)win.get("WIN");
                     if(yesWin.equals("Y")){
                         // NOTIFICATION HERE
+
+                        Intent intent = new Intent(MapsActivity.this, GameActivity.class);
+                        startActivity(intent);
                     }
 
                 } else {
