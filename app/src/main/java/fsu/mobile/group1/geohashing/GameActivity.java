@@ -69,6 +69,8 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         renderUI();
     }
 
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
@@ -82,7 +84,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
             case R.id.sign_out:
                 signOut();
                 return true;
-            default: 
+            default:
                 return super.onOptionsItemSelected(item);
         }
     }
@@ -106,6 +108,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         mManager=getSupportFragmentManager();
         fragTransaction=mManager.beginTransaction();
         fragTransaction.replace(R.id.ui_fragment, myWait, "wait");
+        fragTransaction.addToBackStack("to WaitingFragment");
         fragTransaction.commit();
 
     }
