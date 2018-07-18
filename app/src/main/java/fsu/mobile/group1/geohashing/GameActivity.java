@@ -31,7 +31,7 @@ import java.util.List;
 
 //This is the activity where we will base everything game related
 //We will launch the MapsActivity Fragment from here as well as any other fragments needed to support the game
-public class GameActivity extends AppCompatActivity implements GameUIFragment.UiListener {
+public class GameActivity extends AppCompatActivity implements GameUIFragment.UiListener, ListFragment.ListListener {
     public static String gameName;
     private Toolbar mToolbar;
     private FragmentManager mManager;
@@ -54,6 +54,9 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        names.add("Test");
+        names.add("Test");
+
 
         mToolbar = (Toolbar) findViewById(R.id.action_bar);
         gameName = "GameTest"; //tb removed later
@@ -117,7 +120,6 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         getGames();
 
         Bundle bundle = new Bundle();
-         names.add("Test");
         bundle.putStringArrayList("list", names);
         myList= new ListFragment();
         myList.setArguments(bundle);

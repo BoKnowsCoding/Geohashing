@@ -52,8 +52,10 @@ public class ListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id){
                 Log.i("testing", "Got to String Selected Assignment");
-                String selected=listView.getItemAtPosition(position).toString();
-                Log.i("testing", "Got to onGameSelected Call");
+
+                Object myObject=listView.getItemAtPosition(position);
+                String selected=myObject.toString();
+                Log.i("testing", selected);
                 listListener.onGameSelected(selected);
             }
         });
@@ -61,7 +63,7 @@ public class ListFragment extends Fragment {
         return root;
     }
 
-/*
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -72,5 +74,5 @@ public class ListFragment extends Fragment {
                     + " must implement ListListener");
         }
     }
-*/
+
 }
