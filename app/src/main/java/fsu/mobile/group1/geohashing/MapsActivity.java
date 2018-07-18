@@ -118,7 +118,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     private void createNextNode() {
-        Log.i(TAG,"createNExtNode");
+        Log.i(TAG,"createNextNode");
         try {
             if (true) {
                 Task<Location> locationResult = mFusedLocationClient.getLastLocation();

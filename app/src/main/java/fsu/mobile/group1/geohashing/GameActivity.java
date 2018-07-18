@@ -31,7 +31,7 @@ import java.util.List;
 
 //This is the activity where we will base everything game related
 //We will launch the MapsActivity Fragment from here as well as any other fragments needed to support the game
-public class GameActivity extends AppCompatActivity implements GameUIFragment.UiListener, ListFragment.ListListener, RunningGame.RunningListener, WaitingFragment.WaitListener {
+public class GameActivity extends AppCompatActivity implements GameUIFragment.UiListener, ListFragment.ListListener, WaitingFragment.WaitListener {
     public static String gameName = "myGameName";
     private Toolbar mToolbar;
     private FragmentManager mManager;
@@ -40,7 +40,6 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
     private  GameUIFragment myGame;
     private ListFragment myList;
     private WaitingFragment myWait;
-    private RunningGame runningGame;
 
     // Access a Cloud Firestore instance from your Activity
     FirebaseFirestore db = FirebaseFirestore.getInstance();
