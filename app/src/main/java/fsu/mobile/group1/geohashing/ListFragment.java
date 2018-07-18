@@ -39,7 +39,7 @@ public class ListFragment extends Fragment {
         Bundle bundle=getArguments();
         if(bundle!=null){
             ArrayList<String> myArray=bundle.getStringArrayList("list");
-            ArrayAdapter<String> items= new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, myArray );
+            ArrayAdapter<String> items= new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, myArray);
             listView.setAdapter(items);
             Toast.makeText(getContext(), "Fetching Games List...", Toast.LENGTH_SHORT).show();
 
@@ -54,13 +54,14 @@ public class ListFragment extends Fragment {
                 Log.i("testing", "Got to String Selected Assignment");
                 String selected=listView.getItemAtPosition(position).toString();
                 Log.i("testing", "Got to onGameSelected Call");
-                listListener.onGameSelected(selected);            }
+                listListener.onGameSelected(selected);
+            }
         });
 
         return root;
     }
 
-
+/*
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -71,5 +72,5 @@ public class ListFragment extends Fragment {
                     + " must implement ListListener");
         }
     }
-
+*/
 }
