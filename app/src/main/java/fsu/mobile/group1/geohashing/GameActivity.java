@@ -32,7 +32,7 @@ import java.util.List;
 //This is the activity where we will base everything game related
 //We will launch the MapsActivity Fragment from here as well as any other fragments needed to support the game
 public class GameActivity extends AppCompatActivity implements GameUIFragment.UiListener, ListFragment.ListListener, RunningGame.RunningListener, WaitingFragment.WaitListener {
-    public static String gameName;
+    public static String gameName = "myGameName";
     private Toolbar mToolbar;
     private FragmentManager mManager;
     private FragmentTransaction fragTransaction;
@@ -176,6 +176,10 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
 
     public void startGame()
     {
+        // check to see if mapsactivity runs
+        Intent intent = new Intent(GameActivity.this, MapsActivity.class);
+        startActivity(intent);
+        /*
         runningGame= new RunningGame();
         fragTransaction=mManager.beginTransaction();
         fragTransaction.addToBackStack(myWait.toString());
@@ -183,6 +187,8 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         fragTransaction.commit();
         //so that loaded up the map fragment into the main one here
         //then we need to attach all the listeners which will implement game logic
+        */
+
     }
 
     private void signOut() {

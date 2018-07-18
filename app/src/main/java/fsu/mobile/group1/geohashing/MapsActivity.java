@@ -347,7 +347,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             + node.get("long").toString());
                     goalLat = Double.parseDouble(node.get("lat").toString());
                     goalLong = Double.parseDouble(node.get("long").toString());
-                    nodeLocationMarker.remove();
+                    if (nodeLocationMarker != null) nodeLocationMarker.remove();
                     LatLng latLng = new LatLng(goalLat, goalLong);
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(latLng);
