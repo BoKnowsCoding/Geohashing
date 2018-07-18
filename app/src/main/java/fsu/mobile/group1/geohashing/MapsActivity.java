@@ -1,10 +1,13 @@
 package fsu.mobile.group1.geohashing;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -316,7 +319,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Map<String,Object> win = snapshot.getData();
                 String yesWin = (String)win.get("WIN");
                 if(yesWin.equals("Y")){
-                    // TODO: NOTIFICATION HERE
+                    NotificationManager nm = (NotificationManager)getSystemService(getApplicationContext().NOTIFICATION_SERVICE);
+
+                    Notification.Builder builder = new Notification.Builder(getApplicationContext());
+                    builder.setContentTitle("Game Completed");
+                    builder.setContentText("Someone Won!");
+                    builder.setAutoCancel(false);
+                    builder.setSmallIcon(R.mipmap.ic_launcher);
+                    builder.setWhen(System.currentTimeMillis());
+                    nm.notify(42069, build(builder));
 
                     Intent intent = new Intent(MapsActivity.this, GameActivity.class);
                     startActivity(intent);
@@ -371,7 +382,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         dr.update(remove);
     }
 
-
+    public static Notification build(final Notification.Builder builder) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            return builder.build();
+        } else {
+            return builder.getNotification();
+        }
+    }
 
 
 
