@@ -52,7 +52,6 @@ import static fsu.mobile.group1.geohashing.GameActivity.gameName;
 
 /* TODO:
 Implement the join game screen
-Send user to some sort of waiting screen after they join a game
 For game creator, give them ability to start game whenever, which removes
 it from the join game list
 When a user wins, send out a notification to the peeps, then i guess return to

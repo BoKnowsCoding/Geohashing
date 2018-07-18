@@ -19,22 +19,18 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link RunningGame.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link RunningGame#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class RunningGame extends Fragment {
 
     MapView mMapView;
     private GoogleMap googleMap;
+    private RunningListener runningListener;
 
     public static RunningGame newInstance() {
-
         return new RunningGame();
+    }
+
+    public interface RunningListener{
+        public void stopGame();
     }
 
     @Override
@@ -84,26 +80,16 @@ public class RunningGame extends Fragment {
         return rootView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-
-    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
+        if (context instanceof RunningListener) {
+            runningListener = (RunningListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement RunningListener");
+        }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-
-    }
-
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

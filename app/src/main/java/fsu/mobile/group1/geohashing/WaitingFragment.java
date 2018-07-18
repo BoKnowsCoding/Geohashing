@@ -26,7 +26,7 @@ public class WaitingFragment extends Fragment implements View.OnClickListener {
     }
 
     public interface WaitListener {
-        public void LaunchGame();
+    public void startGame();
     }
 
 
@@ -68,8 +68,9 @@ public class WaitingFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         //will change the state of the game to "START" when the startGame button is clicked
+        waitListener.startGame();
     }
-/*
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -81,7 +82,7 @@ public class WaitingFragment extends Fragment implements View.OnClickListener {
         }
 
     }
-*/
+
     private void WaitForGame(String name){
 
     }
