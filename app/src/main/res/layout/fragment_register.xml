@@ -6,12 +6,21 @@
     tools:context=".LoginFragment">
 
     <EditText
-        android:id="@+id/username_reg"
+        android:id="@+id/displayName_reg"
         android:layout_width="211dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="169dp"
+        android:ems="10"
+        android:hint="Display Name"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+    <EditText
+        android:id="@+id/username_reg"
+        android:layout_width="211dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/displayName_reg"
+        android:layout_centerHorizontal="true"
         android:ems="10"
         android:hint="@string/email"
         android:inputType="textEmailAddress"

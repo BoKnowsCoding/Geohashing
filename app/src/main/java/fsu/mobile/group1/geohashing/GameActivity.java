@@ -1,6 +1,5 @@
 package fsu.mobile.group1.geohashing;
 
-import android.support.annotation.NonNull;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
@@ -9,9 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -19,6 +20,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -29,8 +31,8 @@ import java.util.List;
 
 //This is the activity where we will base everything game related
 //We will launch the MapsActivity Fragment from here as well as any other fragments needed to support the game
-public class GameActivity extends AppCompatActivity implements GameUIFragment.UiListener, ListFragment.ListListener, WaitingFragment.WaitListener {
-
+public class GameActivity extends AppCompatActivity implements GameUIFragment.UiListener {
+    public static String gameName;
     private Toolbar mToolbar;
     private FragmentManager mManager;
     private FragmentTransaction fragTransaction;
@@ -43,6 +45,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private GoogleSignInClient mGoogleSignInClient;
+    LoginManager mFBLoginManager;
     GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
             .build();
@@ -53,15 +56,16 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         setContentView(R.layout.activity_game);
 
         mToolbar = (Toolbar) findViewById(R.id.action_bar);
-
+        gameName = "GameTest"; //tb removed later
 //        getSupportActionBar().hide();
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
-
+        mFBLoginManager = LoginManager.getInstance();
         // Access a Cloud Firestore instance from your Activity
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        //onCreateGame(); //for testing purposes
         renderUI();
     }
 
@@ -169,7 +173,17 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
     }
 
 
+    public void startGame()
+    {
+       FragmentManager fm = getSupportFragmentManager();
+        RunningGame fragment = new RunningGame();
+        fm.beginTransaction().add(R.id.ui_fragment,fragment).commit();
+        //so that loaded up the map fragment into the main one here
+        //then we need to attach all the listeners which will implement game logic
+    }
+
     private void signOut() {
+        FirebaseAuth.getInstance().signOut();
         mGoogleSignInClient.signOut()
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
@@ -181,6 +195,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
                         startActivity(intent);
                     }
                 });
+        mFBLoginManager.logOut();
     }
 
 
