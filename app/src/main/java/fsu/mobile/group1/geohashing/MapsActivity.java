@@ -204,9 +204,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         Double.parseDouble(String.format("%.6f",location.getLongitude()))) < 5.0){
                     localGameScore++;
                     Log.i(TAG,"Local score" + localGameScore);
-                    Toast.makeText(MapsActivity.this,
-                            "You've captured: " + localGameScore + " nodes!", Toast.LENGTH_SHORT).show();
-                    if(localGameScore > 4){
+                    //Toast.makeText(MapsActivity.this,
+                    //        "You've captured: " + localGameScore + " nodes!", Toast.LENGTH_SHORT).show();
+                    if(localGameScore > 0){
                         DocumentReference docRef = db.collection("users")
                                 .document(currentUser.getUid());
                         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -355,16 +355,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         db.collection(gameName).document("nodeList").collection("nodes")
                                 .document("curNode").delete();
                         db.collection(gameName).document("wins").delete();
-                        NotificationManager nm = (NotificationManager)getSystemService(getApplicationContext().NOTIFICATION_SERVICE);
+                        /*
+                        NotificationManager nm = (NotificationManager)getSystemService(MapsActivity.this.NOTIFICATION_SERVICE);
 
-                        Notification.Builder builder = new Notification.Builder(getApplicationContext());
+                        Notification.Builder builder = new Notification.Builder(MapsActivity.this);
                         builder.setContentTitle("Game Completed");
                         builder.setContentText("Someone Won!");
                         builder.setAutoCancel(false);
                         builder.setSmallIcon(R.mipmap.ic_launcher);
                         builder.setWhen(System.currentTimeMillis());
                         nm.notify(42069, build(builder));
-
+*/
                         Intent intent = new Intent(MapsActivity.this, GameActivity.class);
                         startActivity(intent);
                     }
