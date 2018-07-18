@@ -82,7 +82,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
             case R.id.sign_out:
                 signOut();
                 return true;
-            default:
+            default: 
                 return super.onOptionsItemSelected(item);
         }
     }
