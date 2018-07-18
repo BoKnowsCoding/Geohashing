@@ -31,7 +31,7 @@ import java.util.List;
 
 //This is the activity where we will base everything game related
 //We will launch the MapsActivity Fragment from here as well as any other fragments needed to support the game
-public class GameActivity extends AppCompatActivity implements GameUIFragment.UiListener, ListFragment.ListListener {
+public class GameActivity extends AppCompatActivity implements GameUIFragment.UiListener, ListFragment.ListListener, RunningGame.RunningListener, WaitingFragment.WaitListener {
     public static String gameName;
     private Toolbar mToolbar;
     private FragmentManager mManager;
@@ -40,6 +40,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
     private  GameUIFragment myGame;
     private ListFragment myList;
     private WaitingFragment myWait;
+    private RunningGame runningGame;
 
     // Access a Cloud Firestore instance from your Activity
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -171,18 +172,15 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         fragTransaction=mManager.beginTransaction();
         fragTransaction.replace(R.id.ui_fragment, myWait, "wait");
         fragTransaction.commit();
-
     }
-
-    public void LaunchGame(){
-    }
-
 
     public void startGame()
     {
-       FragmentManager fm = getSupportFragmentManager();
-        RunningGame fragment = new RunningGame();
-        fm.beginTransaction().add(R.id.ui_fragment,fragment).commit();
+        runningGame= new RunningGame();
+        fragTransaction=mManager.beginTransaction();
+        fragTransaction.addToBackStack(myWait.toString());
+        fragTransaction.replace(R.id.wait_fragment, runningGame, "running_frag");
+        fragTransaction.commit();
         //so that loaded up the map fragment into the main one here
         //then we need to attach all the listeners which will implement game logic
     }
@@ -201,6 +199,10 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
                     }
                 });
         mFBLoginManager.logOut();
+    }
+
+    public void stopGame(){
+
     }
 
 
