@@ -206,7 +206,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.i(TAG,"Local score" + localGameScore);
                     //Toast.makeText(MapsActivity.this,
                     //        "You've captured: " + localGameScore + " nodes!", Toast.LENGTH_SHORT).show();
-                    if(localGameScore > 0){
+                    if(localGameScore > 4){
                         DocumentReference docRef = db.collection("users")
                                 .document(currentUser.getUid());
                         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
