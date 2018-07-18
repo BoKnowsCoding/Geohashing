@@ -16,10 +16,12 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -37,6 +39,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -66,6 +69,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private FirebaseFirestore db;
     Location mLastKnownLocation;
+    LocationRequest mLocationRequest;
     Location mLastLocation;
     Marker mCurrLocationMarker;
     Marker nodeLocationMarker;
@@ -75,6 +79,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     Map<String, Object> userMap;
+
     //private Map<String, Object> userMap;
     private int localGameScore;
     private static final int DEFAULT_ZOOM = 15;
@@ -126,12 +131,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     @Override
                     public void onComplete(@NonNull Task<Location> task) {
                         if (task.isSuccessful()) {
+                            Log.i(TAG,"NewLocation");
                             double randomlat = Math.random() *.002 -.001;
                             double randomlong = Math.random() *.002 -.001;
+                            randomlat = Double.parseDouble(String.format("%.6f",randomlat));
+                            randomlong = Double.parseDouble(String.format("%.6f",randomlong));
                             mLastKnownLocation = task.getResult();
                             Map<String, String> data = new HashMap<>();
-                            double lat = mLastKnownLocation.getLatitude() + randomlat;
-                            double lng = mLastKnownLocation.getLongitude() + randomlong;
+                            double lat = Double.parseDouble(String.format("%.6f",mLastKnownLocation.getLatitude()))+randomlat;
+                            double lng = Double.parseDouble(String.format("%.6f",mLastKnownLocation.getLongitude()))+randomlong;
                             data.put("lat", String.valueOf(lat));
                             data.put("long", String.valueOf(lng));
                             Log.i(TAG, "Lat: " + lat );
@@ -165,7 +173,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
+            Log.i(TAG,"LocationUpdate");
             List<Location> locationList = locationResult.getLocations();
+            Log.i(TAG,"Location call back hit: " + locationList.size());
             if (locationList.size() > 0) {
                 //The last location in the list is the newest
 
@@ -188,54 +198,61 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mCurrLocationMarker = mMap.addMarker(markerOptions);
 
                 //move map camera
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,18));
 
-                if(distanceFromGoal(goalLat, goalLong, location.getLatitude(),
-                        location.getLongitude()) < 5.0){
+                if(distanceFromGoal(goalLat, goalLong, Double.parseDouble(String.format("%.6f",location.getLatitude())),
+                        Double.parseDouble(String.format("%.6f",location.getLongitude()))) < 5.0){
                     localGameScore++;
+                    Log.i(TAG,"Local score" + localGameScore);
+                    Toast.makeText(MapsActivity.this,
+                            "You've captured: " + localGameScore + " nodes!", Toast.LENGTH_SHORT).show();
                     if(localGameScore > 4){
                         DocumentReference docRef = db.collection("users")
                                 .document(currentUser.getUid());
                         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot document = task.getResult();
-                                if (document.exists()) {
-                                    userMap = document.getData();
-                                    int overallScore = (Integer) userMap.get("score");
-                                    overallScore++;
-                                    userMap.put("score",overallScore);
-                                    db.collection("users")
-                                            .document(currentUser.getUid())
-                                            .set(userMap)
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    Log.d(TAG, "DocumentSnapshot successfully written!");
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Log.w(TAG, "Error writing document", e);
-                                                }
-                                            });
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        userMap = document.getData();
+                                        int overallScore = (Integer) userMap.get("score");
+                                        overallScore++;
+                                        userMap.put("score",overallScore);
+                                        db.collection("users")
+                                                .document(currentUser.getUid())
+                                                .set(userMap)
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w(TAG, "Error writing document", e);
+                                                    }
+                                                });
+                                    } else {
+                                        Log.d(TAG, "No such document");
+                                    }
                                 } else {
-                                    Log.d(TAG, "No such document");
+                                    Log.d(TAG, "get failed with ", task.getException());
                                 }
-                            } else {
-                                Log.d(TAG, "get failed with ", task.getException());
-                            }
                             }
                         });
                         Map<String,Object> winMap = new HashMap<>();
                         winMap.put("WIN","Y");
                         db.collection(gameName).document("wins").set(winMap);
                     }
+                    else
+                    {
+                        createNextNode();
+                    }
                 }
 
-               // db.collection(gameName).document("playerList").collection("players")
+                // db.collection(gameName).document("playerList").collection("players")
                 // .document(curPlayer).update("lat", location.getLatitude());
                 //db.collection(gameName).document("playerList").collection("players")
                 // .document(curPlayer).update("long", location.getLongitude());
@@ -252,8 +269,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double secondPart = (Math.cos(latRad1) * Math.cos(latRad2)
                 * (1.0 - Math.cos(longRad2-longRad1))/2.0);
         double mainPart = firstPart + secondPart;
+        Log.i(TAG, "Goal" + lat1 + " " + long1);
+        Log.i(TAG,"Distance from goal: " + earthRadius * Math.acos(1.0-(mainPart * 2.0)));
         return earthRadius * Math.acos(1.0-(mainPart * 2.0));
     }
+
+
+
 
     /**
      * Manipulates the map once available.
@@ -276,13 +298,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } else {
             // I believe this sets the location to wherever the user is,
             // and follows them unless they move the map.
-            mMap.setMyLocationEnabled(true);
+
+
+
         }
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(500);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        mMap.setMyLocationEnabled(true);
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
         // Original code in here:
         // Add a marker in Sydney and move the camera
         //LatLng sydney = new LatLng(-34, 151);
         //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        /*
         createNextNode(); //needs to be removed later
         db.collection(gameName).document("nodeList").collection("nodes")
                 .document("curNode").get()
@@ -290,11 +321,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshots) {
                     Map<String,Object> node = documentSnapshots.getData();
-                    Log.i(TAG,node.get("lat").toString() + " "
+                    Log.i(TAG,"First node " +node.get("lat").toString() + " "
                             + node.get("long").toString());
                     goalLat = Double.parseDouble(node.get("lat").toString());
                     goalLong = Double.parseDouble(node.get("long").toString());
-
+                    if(nodeLocationMarker != null) nodeLocationMarker.remove();
                     LatLng latLng = new LatLng(goalLat, goalLong);
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(latLng);
@@ -303,43 +334,48 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
                     nodeLocationMarker = mMap.addMarker(markerOptions);
         }});
-
+*/
 
         DocumentReference winDocRef = db.collection(gameName).document("wins");
         winDocRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot snapshot,
                                 @Nullable FirebaseFirestoreException e) {
-            if (e != null) {
-                System.err.println("Listen failed: " + e);
-                return;
-            }
-
-            if (snapshot != null && snapshot.exists()) {
-                Map<String,Object> win = snapshot.getData();
-                String yesWin = (String)win.get("WIN");
-                if(yesWin.equals("Y")){
-                    NotificationManager nm = (NotificationManager)getSystemService(getApplicationContext().NOTIFICATION_SERVICE);
-
-                    Notification.Builder builder = new Notification.Builder(getApplicationContext());
-                    builder.setContentTitle("Game Completed");
-                    builder.setContentText("Someone Won!");
-                    builder.setAutoCancel(false);
-                    builder.setSmallIcon(R.mipmap.ic_launcher);
-                    builder.setWhen(System.currentTimeMillis());
-                    nm.notify(42069, build(builder));
-
-                    Intent intent = new Intent(MapsActivity.this, GameActivity.class);
-                    startActivity(intent);
+                if (e != null) {
+                    System.err.println("Listen failed: " + e);
+                    return;
                 }
 
-            } else {
+                if (snapshot != null && snapshot.exists()) {
+                    Map<String,Object> win = snapshot.getData();
+                    String yesWin = (String)win.get("WIN");
+                    if(yesWin.equals("Y")){
+                        Toast.makeText(MapsActivity.this,
+                                "You've won!", Toast.LENGTH_SHORT).show();
+                        db.collection(gameName).document("nodeList").collection("nodes")
+                                .document("curNode").delete();
+                        db.collection(gameName).document("wins").delete();
+                        NotificationManager nm = (NotificationManager)getSystemService(getApplicationContext().NOTIFICATION_SERVICE);
 
-            }
+                        Notification.Builder builder = new Notification.Builder(getApplicationContext());
+                        builder.setContentTitle("Game Completed");
+                        builder.setContentText("Someone Won!");
+                        builder.setAutoCancel(false);
+                        builder.setSmallIcon(R.mipmap.ic_launcher);
+                        builder.setWhen(System.currentTimeMillis());
+                        nm.notify(42069, build(builder));
+
+                        Intent intent = new Intent(MapsActivity.this, GameActivity.class);
+                        startActivity(intent);
+                    }
+
+                } else {
+
+                }
             }
         });
 
-
+        createNextNode();
         DocumentReference docRef = db.collection(gameName).document("nodeList")
                 .collection("nodes").document("curNode");
         docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -354,11 +390,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (snapshot != null && snapshot.exists()) {
 
                     Map<String,Object> node = snapshot.getData();
-                    Log.i(TAG,node.get("lat").toString() + " "
+                    Log.i(TAG,"Table update " + node.get("lat").toString() + " "
                             + node.get("long").toString());
                     goalLat = Double.parseDouble(node.get("lat").toString());
                     goalLong = Double.parseDouble(node.get("long").toString());
-                    if (nodeLocationMarker != null) nodeLocationMarker.remove();
+                    if(nodeLocationMarker != null) nodeLocationMarker.remove();
                     LatLng latLng = new LatLng(goalLat, goalLong);
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(latLng);
