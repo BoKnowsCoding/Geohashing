@@ -32,7 +32,7 @@ import java.util.List;
 //This is the activity where we will base everything game related
 //We will launch the MapsActivity Fragment from here as well as any other fragments needed to support the game
 public class GameActivity extends AppCompatActivity implements GameUIFragment.UiListener, ListFragment.ListListener, WaitingFragment.WaitListener {
-    public static String gameName = "myGameName";
+    public static String gameName;
     private Toolbar mToolbar;
     private FragmentManager mManager;
     private FragmentTransaction fragTransaction;
@@ -59,7 +59,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
 
 
         mToolbar = (Toolbar) findViewById(R.id.action_bar);
-        gameName = "GameTest"; //tb removed later
+        gameName = "GameTest"; // TODO: don't hardcode this
 //        getSupportActionBar().hide();
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -163,7 +163,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         Bundle bundle= new Bundle();
         String userType="Join";
         String GameName=selection;
-        bundle.putString("GameName", GameName);
+        bundle.putString(gameName, GameName);
         bundle.putString("userType", userType);
         myWait= new WaitingFragment();
         myWait.setArguments(bundle);

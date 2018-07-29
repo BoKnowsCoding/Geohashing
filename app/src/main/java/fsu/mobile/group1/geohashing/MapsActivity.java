@@ -52,6 +52,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 //import static fsu.mobile.group1.geohashing.GameActivity.curPlayer;
 import static fsu.mobile.group1.geohashing.GameActivity.gameName;
@@ -131,15 +132,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     @Override
                     public void onComplete(@NonNull Task<Location> task) {
                         if (task.isSuccessful()) {
-                            Log.i(TAG,"NewLocation");
-                            double randomlat = Math.random() *.002 -.001;
-                            double randomlong = Math.random() *.002 -.001;
-                            randomlat = Double.parseDouble(String.format("%.6f",randomlat));
-                            randomlong = Double.parseDouble(String.format("%.6f",randomlong));
-                            mLastKnownLocation = task.getResult();
                             Map<String, String> data = new HashMap<>();
-                            double lat = Double.parseDouble(String.format("%.6f",mLastKnownLocation.getLatitude()))+randomlat;
-                            double lng = Double.parseDouble(String.format("%.6f",mLastKnownLocation.getLongitude()))+randomlong;
+                            double lat;
+                            double lng;
+                            if (gameName == "HashFSU") {
+                                Log.i(TAG, "NewLocation FSU Campus");
+                                Random r = new Random();
+
+                                // boundaries used for fsu main campus
+                                double minLat = 30.435710;
+                                double maxLat = 30.444500;
+                                double minLong = -84.306026;
+                                double maxLong = -84.285728;
+
+                                // generate random latitude and longitude on campus
+                                double randomLat = minLat + r.nextFloat() * (maxLat - minLat);
+                                Log.i(TAG,"Random Lat: " + randomLat);
+                                double randomLong = minLong + r.nextFloat() * (maxLong - minLong);
+                                Log.i(TAG, "Random Long: " + randomLong);
+                                lat = Double.parseDouble(String.format("%.6f", randomLat));
+                                lng = Double.parseDouble(String.format("%.6f", randomLong));
+                                mLastKnownLocation = task.getResult();
+                            } else {
+                                Log.i(TAG, "NewLocation proximal");
+                                double randomlat = Math.random() * .002 - .001;
+                                double randomlong = Math.random() * .002 - .001;
+                                randomlat = Double.parseDouble(String.format("%.6f", randomlat));
+                                randomlong = Double.parseDouble(String.format("%.6f", randomlong));
+                                mLastKnownLocation = task.getResult();
+                                lat = Double.parseDouble(String.format("%.6f", mLastKnownLocation.getLatitude())) + randomlat;
+                                lng = Double.parseDouble(String.format("%.6f", mLastKnownLocation.getLongitude())) + randomlong;
+                            }
                             data.put("lat", String.valueOf(lat));
                             data.put("long", String.valueOf(lng));
                             Log.i(TAG, "Lat: " + lat );
