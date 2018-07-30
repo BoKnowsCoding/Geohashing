@@ -32,7 +32,8 @@ import java.util.List;
 //This is the activity where we will base everything game related
 //We will launch the MapsActivity Fragment from here as well as any other fragments needed to support the game
 public class GameActivity extends AppCompatActivity implements GameUIFragment.UiListener, ListFragment.ListListener, WaitingFragment.WaitListener {
-    public static String gameName;
+    private String gameName;
+    private String gameType;
     private Toolbar mToolbar;
     private FragmentManager mManager;
     private FragmentTransaction fragTransaction;
@@ -59,7 +60,6 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
 
 
         mToolbar = (Toolbar) findViewById(R.id.action_bar);
-        gameName = "GameTest"; // TODO: don't hardcode this
 //        getSupportActionBar().hide();
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -158,7 +158,10 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
                 });
     }
 
-    public void onGameSelected(String selection){
+    public void onGameSelected(String selection) {
+        // TODO: take gameName and gameType from user choice/input if we use this to join
+        gameName = "GameTest";
+        gameType = "BattleRoyale";
         //Add the user to the selected game document and move them to the lobby
         Bundle bundle= new Bundle();
         String userType="Join";
@@ -173,10 +176,17 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         fragTransaction.commit();
     }
 
-    public void startGame()
-    {
+    public void startGame() {
+        // TODO: take gameName and gameType from user choice/input (create)
+        gameName = "GameTest";
+        gameType = "BattleRoyale";
+
         // check to see if mapsactivity runs
         Intent intent = new Intent(GameActivity.this, MapsActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("gameType", gameType);
+        bundle.putString("gameName", gameName);
+        intent.putExtras(bundle);
         startActivity(intent);
         /*
         runningGame= new RunningGame();

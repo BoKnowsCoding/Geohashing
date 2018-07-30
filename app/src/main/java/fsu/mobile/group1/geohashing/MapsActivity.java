@@ -55,7 +55,6 @@ import java.util.Map;
 import java.util.Random;
 
 //import static fsu.mobile.group1.geohashing.GameActivity.curPlayer;
-import static fsu.mobile.group1.geohashing.GameActivity.gameName;
 
 /* TODO:
 Implement the join game screen
@@ -80,6 +79,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     Map<String, Object> userMap;
+    private String gameType;
+    private String gameName;
 
     //private Map<String, Object> userMap;
     private int localGameScore;
@@ -135,7 +136,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             Map<String, String> data = new HashMap<>();
                             double lat;
                             double lng;
-                            if (gameName == "HashFSU") {
+                            if (gameType == "HashFSU") {
                                 Log.i(TAG, "NewLocation FSU Campus");
                                 Random r = new Random();
 
@@ -153,7 +154,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 lat = Double.parseDouble(String.format("%.6f", randomLat));
                                 lng = Double.parseDouble(String.format("%.6f", randomLong));
                                 mLastKnownLocation = task.getResult();
-                            } else {
+                            } else if (gameType == "BattleRoyale") {
                                 Log.i(TAG, "NewLocation proximal");
                                 double randomlat = Math.random() * .002 - .001;
                                 double randomlong = Math.random() * .002 - .001;
@@ -162,6 +163,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 mLastKnownLocation = task.getResult();
                                 lat = Double.parseDouble(String.format("%.6f", mLastKnownLocation.getLatitude())) + randomlat;
                                 lng = Double.parseDouble(String.format("%.6f", mLastKnownLocation.getLongitude())) + randomlong;
+                            } else {
+                                // if you properly set the game type this should never happen,
+                                // but these need to be defined to compile
+                                Log.i(TAG,"Error: No gameType set");
+                                lat = 0;
+                                lng = 0;
                             }
                             data.put("lat", String.valueOf(lat));
                             data.put("long", String.valueOf(lng));
