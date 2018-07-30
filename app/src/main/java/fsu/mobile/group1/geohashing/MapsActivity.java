@@ -276,6 +276,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 //move map camera
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,18));
 
+
                 if(gameType == "FreeForAll"){
                     final Location newLoc = location;
                     DocumentReference docRef = db.collection("games").document(gameName)
