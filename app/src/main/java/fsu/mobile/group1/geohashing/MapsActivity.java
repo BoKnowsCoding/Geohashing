@@ -81,6 +81,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Map<String, Object> userMap;
     private String gameType;
     private String gameName;
+    private String numPoints;
+    private int pointsToWin;
 
     //private Map<String, Object> userMap;
     private int localGameScore;
@@ -95,6 +97,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // get name and type
         gameName = getIntent().getExtras().getString("gameName");
         gameType = getIntent().getExtras().getString("gameType");
+        numPoints = getIntent().getExtras().getString("numPoints");
 
         //THIS IS FOR GETTING STUFF FROM DATABASE
         mAuth = FirebaseAuth.getInstance();
@@ -102,6 +105,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         userMap = new HashMap<>();
 
         db = FirebaseFirestore.getInstance();
+        Map<String,Object> blah = new HashMap<>();
+        blah.put("asdf",333);
+        db.collection("games").document("i to die lmao").set(blah);
+        db.collection("games").document("i want to die lmao").collection("nodeList").document("blah").set(blah);
+        Log.i("asdfasdf", db.collection("games").document("i want to die lmao").getId());
+
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -137,10 +146,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     @Override
                     public void onComplete(@NonNull Task<Location> task) {
                         if (task.isSuccessful()) {
-                            Map<String, String> data = new HashMap<>();
                             double lat;
                             double lng;
                             if (gameType == "HashFSU") {
+                                Map<String, String> data = new HashMap<>();
                                 Log.i(TAG, "NewLocation FSU Campus");
                                 Random r = new Random();
 
@@ -158,7 +167,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 lat = Double.parseDouble(String.format("%.6f", randomLat));
                                 lng = Double.parseDouble(String.format("%.6f", randomLong));
                                 mLastKnownLocation = task.getResult();
+                                data.put("lat", String.valueOf(lat));
+                                data.put("long", String.valueOf(lng));
+                                db.collection("games").document(gameName)
+                                        .collection("nodeList")
+                                        .document("curNode").set(data);
                             } else if (gameType == "BattleRoyale") {
+                                Map<String, String> data = new HashMap<>();
                                 Log.i(TAG, "NewLocation proximal");
                                 double randomlat = Math.random() * .002 - .001;
                                 double randomlong = Math.random() * .002 - .001;
@@ -167,21 +182,52 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 mLastKnownLocation = task.getResult();
                                 lat = Double.parseDouble(String.format("%.6f", mLastKnownLocation.getLatitude())) + randomlat;
                                 lng = Double.parseDouble(String.format("%.6f", mLastKnownLocation.getLongitude())) + randomlong;
-                            } else {
+                                data.put("lat", String.valueOf(lat));
+                                data.put("long", String.valueOf(lng));
+                                db.collection("games").document(gameName)
+                                        .collection("nodeList")
+                                        .document("curNode").set(data);
+                            } else if(gameType == "FreeForAll"){
+                                Map<String, Double[]> data = new HashMap<>();
+                                int intNumPoints = Integer.getInteger(numPoints);
+                                pointsToWin = (int)Math.ceil(intNumPoints/4.0);
+                                Double[] latArray = new Double[intNumPoints];
+                                Double[] longArray = new Double[intNumPoints];
+                                for(int i = 0; i < intNumPoints; i++){
+                                    double randomLat = Math.random() * .002 - .001;
+                                    double randomLong = Math.random() * .002 - .001;
+                                    randomLat = Double.parseDouble(String.format("%.6f", randomLat));
+                                    randomLong = Double.parseDouble(String.format("%.6f", randomLong));
+                                    mLastKnownLocation = task.getResult();
+                                    latArray[i] = Double.parseDouble(String.format("%.6f", mLastKnownLocation.getLatitude())) + randomLat;
+                                    longArray[i] = Double.parseDouble(String.format("%.6f", mLastKnownLocation.getLongitude())) + randomLong;
+                                }
+                                data.put("lat", latArray);
+                                data.put("long", longArray);
+                                db.collection("games").document(gameName)
+                                        .collection("nodeList")
+                                        .document("curNode").set(data);
+                            }
+                            else {
+                                Map<String, String> data = new HashMap<>();
                                 // if you properly set the game type this should never happen,
                                 // but these need to be defined to compile
                                 Log.i(TAG,"Error: No gameType set");
                                 lat = 0;
                                 lng = 0;
+                                data.put("lat", String.valueOf(lat));
+                                data.put("long", String.valueOf(lng));
+                                db.collection("games").document(gameName)
+                                        .collection("nodeList")
+                                        .document("Nodes").set(data);
                             }
-                            data.put("lat", String.valueOf(lat));
-                            data.put("long", String.valueOf(lng));
-                            Log.i(TAG, "Lat: " + lat );
-                            Log.i(TAG, "lng: " + lng );
-                            db.collection(gameName).document("nodeList")
-                                    .collection("nodes")
-                                    .document("curNode").set(data);
 
+                            //Log.i(TAG, "Lat: " + lat );
+                            //Log.i(TAG, "lng: " + lng );
+                            //
+                            //db.collection(gameName).document("nodeList")
+                            //        .collection("nodes")
+                            //        .document("curNode").set(data);
                         }
 
                     }
@@ -234,58 +280,106 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 //move map camera
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,18));
 
-                if(distanceFromGoal(goalLat, goalLong, Double.parseDouble(String.format("%.6f",location.getLatitude())),
-                        Double.parseDouble(String.format("%.6f",location.getLongitude()))) < 5.0){
-                    localGameScore++;
-                    Log.i(TAG,"Local score" + localGameScore);
-                    //Toast.makeText(MapsActivity.this,
-                    //        "You've captured: " + localGameScore + " nodes!", Toast.LENGTH_SHORT).show();
-                    if(localGameScore > 4){
-                        DocumentReference docRef = db.collection("users")
-                                .document(currentUser.getUid());
-                        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    DocumentSnapshot document = task.getResult();
-                                    if (document.exists()) {
-                                        userMap = document.getData();
-                                        int overallScore = (Integer) userMap.get("score");
-                                        overallScore++;
-                                        userMap.put("score",overallScore);
-                                        db.collection("users")
-                                                .document(currentUser.getUid())
-                                                .set(userMap)
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                if(gameType == "FreeForAll"){
+                    final Location newLoc = location;
+                    DocumentReference docRef = db.collection("games").document(gameName)
+                            .collection("nodeList").document("Nodes");
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if(task.isSuccessful()){
+                                DocumentSnapshot document = task.getResult();
+                                if(document.exists()){
+                                    Map<String,Object> latLongMap = document.getData();
+                                    Double[] latArray = (Double[])latLongMap.get("lat");
+                                    Double[] longArray = (Double[])latLongMap.get("long");
+                                    for(int i = 0; i < Integer.getInteger(numPoints); i++){
+                                        if(distanceFromGoal(latArray[i], longArray[i], Double.parseDouble(String.format("%.6f", newLoc.getLatitude())), Double.parseDouble(String.format("%.6f", newLoc.getLongitude()))) < 5.0){
+                                            localGameScore++;
+                                            if(localGameScore > pointsToWin){
+                                                DocumentReference docRef2 = db.collection("users").document(currentUser.getUid());
+                                                docRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                     @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        Log.d(TAG, "DocumentSnapshot successfully written!");
-                                                    }
-                                                })
-                                                .addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        Log.w(TAG, "Error writing document", e);
+                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
+                                                        if(task2.isSuccessful()){
+                                                            DocumentSnapshot document2 = task2.getResult();
+                                                            if(document2.exists()){
+                                                                userMap = document2.getData();
+                                                                int overallScore = (Integer) userMap.get("score");
+                                                                overallScore++;
+                                                                userMap.put("score",overallScore);
+                                                                db.collection("users").document(currentUser.getUid()).set(userMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                    @Override
+                                                                    public void onSuccess(Void aVoid) {
+                                                                        Log.d(TAG,"DocumentSnapshot successfully written");
+                                                                    }
+                                                                });
+                                                            }
+                                                        }
                                                     }
                                                 });
-                                    } else {
-                                        Log.d(TAG, "No such document");
+                                                Map<String, Object> winMap = new HashMap<>();
+                                                winMap.put("WIN", "Y");
+                                                db.collection("games").document(gameName).collection("wins").document("isWin").set(winMap);
+                                            }
+                                        }
                                     }
-                                } else {
-                                    Log.d(TAG, "get failed with ", task.getException());
                                 }
                             }
-                        });
-                        Map<String,Object> winMap = new HashMap<>();
-                        winMap.put("WIN","Y");
-                        db.collection(gameName).document("wins").set(winMap);
-                    }
-                    else
-                    {
-                        createNextNode();
+                        }
+                    });
+                    //Double[] latList = db.collection("games").document(gameName).collection("nodeList").document("Nodes").get();
+                }else {
+                    if (distanceFromGoal(goalLat, goalLong, Double.parseDouble(String.format("%.6f", location.getLatitude())),
+                            Double.parseDouble(String.format("%.6f", location.getLongitude()))) < 5.0) {
+                        localGameScore++;
+                        Log.i(TAG, "Local score" + localGameScore);
+                        //Toast.makeText(MapsActivity.this,
+                        //        "You've captured: " + localGameScore + " nodes!", Toast.LENGTH_SHORT).show();
+                        if (localGameScore > 4) {
+                            DocumentReference docRef = db.collection("users")
+                                    .document(currentUser.getUid());
+                            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        DocumentSnapshot document = task.getResult();
+                                        if (document.exists()) {
+                                            userMap = document.getData();
+                                            int overallScore = (Integer) userMap.get("score");
+                                            overallScore++;
+                                            userMap.put("score", overallScore);
+                                            db.collection("users")
+                                                    .document(currentUser.getUid())
+                                                    .set(userMap)
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            Log.d(TAG, "DocumentSnapshot successfully written!");
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Log.w(TAG, "Error writing document", e);
+                                                        }
+                                                    });
+                                        } else {
+                                            Log.d(TAG, "No such document");
+                                        }
+                                    } else {
+                                        Log.d(TAG, "get failed with ", task.getException());
+                                    }
+                                }
+                            });
+                            Map<String, Object> winMap = new HashMap<>();
+                            winMap.put("WIN", "Y");
+                            db.collection("games").document(gameName).collection("wins").document("isWin").set(winMap);
+                        } else {
+                            createNextNode();
+                        }
                     }
                 }
-
                 // db.collection(gameName).document("playerList").collection("players")
                 // .document(curPlayer).update("lat", location.getLatitude());
                 //db.collection(gameName).document("playerList").collection("players")
