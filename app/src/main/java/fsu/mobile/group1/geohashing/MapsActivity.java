@@ -92,6 +92,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        // get name and type
+        gameName = getIntent().getExtras().getString("gameName");
+        gameType = getIntent().getExtras().getString("gameType");
+
         //THIS IS FOR GETTING STUFF FROM DATABASE
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
