@@ -94,7 +94,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // get name and type
         gameName = getIntent().getExtras().getString("gameName");
+        Log.i(TAG,"gameName = " + gameName);
         gameType = getIntent().getExtras().getString("gameType");
+        Log.i(TAG,"gameType = " + gameType);
 
         //THIS IS FOR GETTING STUFF FROM DATABASE
         mAuth = FirebaseAuth.getInstance();
@@ -140,7 +142,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             Map<String, String> data = new HashMap<>();
                             double lat;
                             double lng;
-                            if (gameType == "HashFSU") {
+                            if (gameType.equals("HashFSU")) {
                                 Log.i(TAG, "NewLocation FSU Campus");
                                 Random r = new Random();
 
@@ -158,7 +160,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 lat = Double.parseDouble(String.format("%.6f", randomLat));
                                 lng = Double.parseDouble(String.format("%.6f", randomLong));
                                 mLastKnownLocation = task.getResult();
-                            } else if (gameType == "BattleRoyale") {
+                            } else if (gameType.equals("BattleRoyale")) {
                                 Log.i(TAG, "NewLocation proximal");
                                 double randomlat = Math.random() * .002 - .001;
                                 double randomlong = Math.random() * .002 - .001;
