@@ -96,8 +96,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // get name and type
         gameName = getIntent().getExtras().getString("gameName");
+        Log.i(TAG,"gameName = " + gameName);
         gameType = getIntent().getExtras().getString("gameType");
         numPoints = getIntent().getExtras().getString("numPoints");
+        Log.i(TAG,"gameType = " + gameType);
 
         //THIS IS FOR GETTING STUFF FROM DATABASE
         mAuth = FirebaseAuth.getInstance();
@@ -105,12 +107,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         userMap = new HashMap<>();
 
         db = FirebaseFirestore.getInstance();
-        Map<String,Object> blah = new HashMap<>();
-        blah.put("asdf",333);
-        db.collection("games").document("i to die lmao").set(blah);
-        db.collection("games").document("i want to die lmao").collection("nodeList").document("blah").set(blah);
-        Log.i("asdfasdf", db.collection("games").document("i want to die lmao").getId());
-
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -380,6 +376,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         }
                     }
                 }
+
                 // db.collection(gameName).document("playerList").collection("players")
                 // .document(curPlayer).update("lat", location.getLatitude());
                 //db.collection(gameName).document("playerList").collection("players")
