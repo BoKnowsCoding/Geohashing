@@ -9,4 +9,52 @@
     <string name="email">Email</string>
     <string name="facebook_app_id">2168450936770445</string>
     <string name="fb_login_protocol_scheme">fb2168450936770445</string>
+
+    <string-array name="Game_Modes">
+        <item>Single Objective</item>
+        <item>Multi Objective</item>
+        <item>FSU Geohash Challenge</item>
+        <item>Distance Challenge</item>
+    </string-array>
+
+    <string-array name="Game_Points">
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>25</item>
+        <item>30</item>
+        <item>35</item>
+        <item>40</item>
+        <item>45</item>
+        <item>50</item>
+        <item>55</item>
+        <item>60</item>
+        <item>65</item>
+        <item>70</item>
+        <item>75</item>
+        <item>80</item>
+        <item>85</item>
+        <item>90</item>
+        <item>95</item>
+        <item>100</item>
+    </string-array>
+
+    <string-array name="Game_Radius">
+        <item>0.5</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+        <item>100</item>
+        <item>Earth</item>
+    </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

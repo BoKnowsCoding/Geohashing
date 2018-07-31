@@ -4,12 +4,18 @@ package fsu.mobile.group1.geohashing;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 
 /**
@@ -18,15 +24,24 @@ import android.widget.Toast;
 public class WaitingFragment extends Fragment implements View.OnClickListener {
 
     private Button mStart;
-    private TextView waitText;
+    private Spinner mode;
+    private Spinner point;
+    private Spinner radius;
+    private EditText GameName;
     private WaitListener waitListener;
+    private String Mode;
+    private String Point;
+    private String Radius;
+
 
     public WaitingFragment() {
         // Required empty public constructor
     }
 
     public interface WaitListener {
-    public void startGame();
+    public void startGame(Bundle bundle);
+
+
     }
 
 
@@ -35,40 +50,61 @@ public class WaitingFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_waiting, container, false);
-        mStart = root.findViewById(R.id.start);
-        waitText = root.findViewById(R.id.wait_start);
-        mStart.setOnClickListener(this);
-        mStart.setEnabled(false);
-        mStart.setVisibility(View.INVISIBLE);
-        waitText.setVisibility(View.INVISIBLE);
-        String userType;
-        String GameName;
-        Bundle bundle= getArguments();
-        if(bundle!=null) {
-             userType = bundle.getString("userType");
-             GameName= bundle.getString("GameName");
+        GameName=root.findViewById(R.id.game_name);
+        mode=root.findViewById(R.id.mode_spinner);
+        point=root.findViewById(R.id.point_spinner);
+        radius=root.findViewById(R.id.distance_spinner);
+        mStart=root.findViewById(R.id.start);
 
-            if(userType.equals("Join")){
-                waitText.setVisibility(View.VISIBLE);
-            }
-            else if(userType.equals("Create")){
-                mStart.setVisibility(View.VISIBLE);
-                mStart.setEnabled(true);
-            }
 
-            WaitForGame(GameName);
-        }
-        else{
-            Toast.makeText(getContext(),"Error with Game sorry...", Toast.LENGTH_SHORT).show();
-        }
+
+        //code taken from here--https://android--code.blogspot.com/2015/08/android-spinner-get-selected-item-text.html
+        mode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Mode=mode.getItemAtPosition(position).toString();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        point.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Point=point.getItemAtPosition(position).toString();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        radius.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Radius=radius.getItemAtPosition(position).toString();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
 
         return root;
     }
 
     @Override
     public void onClick(View v) {
-        //will change the state of the game to "START" when the startGame button is clicked
-        waitListener.startGame();
+
+        if(!GameName.getText().toString().equals("")){
+        Bundle bundle= new Bundle();
+        bundle.putString("Name", GameName.getText().toString());
+        bundle.putString("Mode", Mode);
+        bundle.putString("Point", Point);
+        bundle.putString("Radius", Radius);
+        waitListener.startGame(bundle);
+        }
+
+
     }
 
     @Override
@@ -83,7 +119,4 @@ public class WaitingFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    private void WaitForGame(String name){
-
-    }
 }

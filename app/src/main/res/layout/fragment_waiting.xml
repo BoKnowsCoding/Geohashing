@@ -12,16 +12,105 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="63dp"
-        android:text="Start Game"
+        android:layout_marginBottom="48dp"
+        android:text="Launch"
+        android:background="@color/colorWhite"
         tools:onClick="onClick" />
 
     <TextView
-        android:id="@+id/wait_start"
+        android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="95dp"
-        android:text="Waiting for Game to Start..." />
+        android:layout_marginTop="63dp"
+        android:text="Select Your Game Preferences:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        tools:typeface="sans" />
+
+    <TextView
+        android:id="@+id/game_name_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="143dp"
+        android:text="Game Name:"
+        android:visibility="visible"
+        tools:onClick="onClick" />
+
+    <TextView
+        android:id="@+id/game_type_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="214dp"
+        android:onClick="onClick"
+        android:text="Game Mode:"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/game_points_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:onClick="onClick"
+        android:text="Points to Win:"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/game_distance_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="222dp"
+        android:onClick="onClick"
+        android:text="Distance (in miles):"
+        android:visibility="visible" />
+
+    <EditText
+        android:id="@+id/game_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="36dp"
+        android:layout_marginTop="128dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Game 1" />
+
+    <Spinner
+        android:id="@+id/mode_spinner"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/game_type_text"
+        android:entries="@array/Game_Modes"
+        android:visibility="visible" />
+
+    <Spinner
+        android:id="@+id/point_spinner"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="154dp"
+        android:entries="@array/Game_Points"
+        android:visibility="visible" />
+
+    <Spinner
+        android:id="@+id/distance_spinner"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/game_distance_text"
+        android:layout_marginStart="155dp"
+        android:entries="@array/Game_Radius"
+        android:spinnerMode="dialog"
+        android:visibility="visible" />
+
 </RelativeLayout>
