@@ -43,8 +43,8 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
     private Toolbar mToolbar;
     private FragmentManager mManager;
     private FragmentTransaction fragTransaction;
-    private ArrayList<String> names=new ArrayList<String>();
-    private  GameUIFragment myGame;
+    private ArrayList<String> names = new ArrayList<String>();
+    private GameUIFragment myGame;
     private ListFragment myList;
     private WaitingFragment myWait;
 
@@ -71,7 +71,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         mFBLoginManager = LoginManager.getInstance();
         // Access a Cloud Firestore instance from your Activity
         db = FirebaseFirestore.getInstance();
@@ -80,7 +80,6 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         //onCreateGame(); //for testing purposes
         renderUI();
     }
-
 
 
     @Override
@@ -102,38 +101,38 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
     }
 
 
-    public void renderUI(){
-        myGame= new GameUIFragment();
-        mManager=getSupportFragmentManager();
-        fragTransaction=mManager.beginTransaction();
+    public void renderUI() {
+        myGame = new GameUIFragment();
+        mManager = getSupportFragmentManager();
+        fragTransaction = mManager.beginTransaction();
         fragTransaction.add(R.id.ui_fragment, myGame, "ui");
         fragTransaction.commit();
     }
 
     //need to add database stuff here as well
-    public void onCreateGame(){
-        Bundle bundle= new Bundle();
-      //  String userType="Create";
+    public void onCreateGame() {
+        Bundle bundle = new Bundle();
+        //  String userType="Create";
         //bundle.putString("userType", userType);
-        myWait= new WaitingFragment();
+        myWait = new WaitingFragment();
         //myWait.setArguments(bundle);
-        mManager=getSupportFragmentManager();
-        fragTransaction=mManager.beginTransaction();
+        mManager = getSupportFragmentManager();
+        fragTransaction = mManager.beginTransaction();
         fragTransaction.replace(R.id.ui_fragment, myWait, "wait");
         fragTransaction.addToBackStack("to WaitingFragment");
         fragTransaction.commit();
 
     }
 
-    public void onJoinGame(){
+    public void onJoinGame() {
         getGames();
 
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("list", names);
-        myList= new ListFragment();
+        myList = new ListFragment();
         myList.setArguments(bundle);
-        mManager=getSupportFragmentManager();
-        fragTransaction=mManager.beginTransaction();
+        mManager = getSupportFragmentManager();
+        fragTransaction = mManager.beginTransaction();
         fragTransaction.addToBackStack(myGame.toString());
         fragTransaction.replace(R.id.ui_fragment, myList, "list_frag");
         fragTransaction.commit();
@@ -142,10 +141,10 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
     }
 
     //retrieves and lists the current games that are available to join
-    public void getGames(){
+    public void getGames() {
         Log.i("test", "Called function getGames()");
         Map<String, Object> asdf = new HashMap<>();
-        asdf.put("blah","blasdfasdf");
+        asdf.put("blah", "blasdfasdf");
         db.collection("games").document("aasdfsdf").set(asdf);
         Log.i("ASDF ACTIVITY", db.collection("games").document("aasdfsdf").getId());
         db.collection("games")
@@ -153,7 +152,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()) {
+                        if (task.isSuccessful()) {
                             //create a list of game names
                             Log.i("testing", "Task was successful inside of getGames function");
                             for (QueryDocumentSnapshot document : task.getResult()) {
@@ -182,20 +181,20 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         gameName = "GameTest";
         gameType = "BattleRoyale";
         //Add the user to the selected game document and move them to the lobby
-        Bundle bundle= new Bundle();
-        String userType="Join";
-        String GameName=selection;
+        Bundle bundle = new Bundle();
+        String userType = "Join";
+        String GameName = selection;
         bundle.putString(gameName, GameName);
         bundle.putString("userType", userType);
-        myWait= new WaitingFragment();
+        myWait = new WaitingFragment();
         myWait.setArguments(bundle);
-        mManager=getSupportFragmentManager();
-        fragTransaction=mManager.beginTransaction();
+        mManager = getSupportFragmentManager();
+        fragTransaction = mManager.beginTransaction();
         fragTransaction.replace(R.id.ui_fragment, myWait, "wait");
         fragTransaction.commit();
     }
 
-    public void startGame() {
+    public void startGame(Bundle data) {
         // TODO: take gameName and gameType from user choice/input (create)
         gameName = "GameTest";
         gameType = "BattleRoyale";
@@ -207,10 +206,10 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         // nodes table
         // Winner entry
         db.collection("games").document("I wanna die lmao");
-        Map<String,Object> typeData = new HashMap<>();
-        typeData.put("GameType",1);
+        Map<String, Object> typeData = new HashMap<>();
+        typeData.put("GameType", 1);
         db.collection("games").document("I wanna die lmao").collection("GameType").document("GameType").set(typeData);
-        Map<String,Object> numPoints = new HashMap<>();
+        Map<String, Object> numPoints = new HashMap<>();
         numPoints.put("numPoints", 5);
         db.collection("games").document("I wanna die lmao").collection("numPoints").document("num").set(numPoints);
         Map<String, Object> setDistance = new HashMap<>();
@@ -233,27 +232,23 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         //then we need to attach all the listeners which will implement game logic
         */
 
-
-
-    private void signOut() {
-        FirebaseAuth.getInstance().signOut();
-        mGoogleSignInClient.signOut()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Intent intent = new Intent(GameActivity.this,
-                                MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                    }
-                });
-        mFBLoginManager.logOut();
     }
+        public void signOut() {
+            FirebaseAuth.getInstance().signOut();
+            mGoogleSignInClient.signOut()
+                    .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Intent intent = new Intent(GameActivity.this,
+                                    MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                        }
+                    });
+            mFBLoginManager.logOut();
+        }
 
-    public void stopGame(){
-
-    }
 
 
 }
