@@ -3,6 +3,7 @@ package fsu.mobile.group1.geohashing;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.transition.Slide;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -12,9 +13,11 @@ import android.transition.TransitionManager;
 import android.util.Log;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.view.Window;
 
 import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -65,7 +68,9 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        mRoot=findViewById(R.id.root);
+        //mRoot=findViewById(R.id.root);
+        //getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        //getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
 
 
 
@@ -116,11 +121,19 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
     //need to add database stuff here as well
     public void onCreateGame() {
 
-        TransitionManager.beginDelayedTransition(mRoot, new Fade());
+        Slide exitFade= new Slide();        //used to load fade out the current fragment
+        Slide enterFade = new Slide(Gravity.LEFT);
+       // exitFade.setDuration(200);
+        enterFade.setStartDelay(500);
+
+        //enterFade.setDuration(200);
         Bundle bundle = new Bundle();
         //  String userType="Create";
         //bundle.putString("userType", userType);
+
         myWait = new WaitingFragment();
+        myWait.setEnterTransition(enterFade);
+        myGame.setExitTransition(exitFade);
         //myWait.setArguments(bundle);
         mManager = getSupportFragmentManager();
         fragTransaction = mManager.beginTransaction();
@@ -132,7 +145,6 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
 
     public void onJoinGame() {
         getGames();
-
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("list", names);
         myList = new ListFragment();

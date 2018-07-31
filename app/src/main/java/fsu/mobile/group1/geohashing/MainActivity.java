@@ -6,6 +6,7 @@ package fsu.mobile.group1.geohashing;
 * Code from Previous Projects
 * Udacity Firebase Course
 * https://www.androiddesignpatterns.com/2014/12/activity-fragment-transitions-in-android-lollipop-part1.html
+* https://medium.com/bynder-tech/how-to-use-material-transitions-in-fragment-transactions-5a62b9d0b26b
 * */
 
 import android.content.Intent;

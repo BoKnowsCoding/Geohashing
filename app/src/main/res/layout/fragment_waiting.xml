@@ -98,7 +98,6 @@
             android:layout_marginEnd="36dp"
             android:layout_marginTop="128dp"
             android:ems="10"
-            android:hint="Game 1"
             android:inputType="textPersonName"
             android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle" />
 
