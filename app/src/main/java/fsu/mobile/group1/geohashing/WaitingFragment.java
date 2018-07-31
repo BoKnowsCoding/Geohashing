@@ -3,11 +3,13 @@ package fsu.mobile.group1.geohashing;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,6 +34,7 @@ public class WaitingFragment extends Fragment implements View.OnClickListener {
     private String Mode;
     private String Point;
     private String Radius;
+    private TextInputLayout name;
 
 
     public WaitingFragment() {
@@ -55,6 +58,8 @@ public class WaitingFragment extends Fragment implements View.OnClickListener {
         point=root.findViewById(R.id.point_spinner);
         radius=root.findViewById(R.id.distance_spinner);
         mStart=root.findViewById(R.id.start);
+        name=root.findViewById(R.id.input_layout_game_name);
+        mStart.setOnClickListener(this);
 
 
 
@@ -95,13 +100,18 @@ public class WaitingFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
 
-        if(!GameName.getText().toString().equals("")){
-        Bundle bundle= new Bundle();
-        bundle.putString("Name", GameName.getText().toString());
-        bundle.putString("Mode", Mode);
-        bundle.putString("Point", Point);
-        bundle.putString("Radius", Radius);
-        waitListener.startGame(bundle);
+        if(GameName.getText().toString().isEmpty()) {
+
+            name.setError("Please Enter a Game Name to Continue");
+        }
+        else {
+            name.setErrorEnabled(false);
+            Bundle bundle = new Bundle();
+            bundle.putString("Name", GameName.getText().toString());
+            bundle.putString("Mode", Mode);
+            bundle.putString("Point", Point);
+            bundle.putString("Radius", Radius);
+            waitListener.startGame(bundle);
         }
 
 

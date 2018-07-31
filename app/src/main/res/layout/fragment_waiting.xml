@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,8 +14,10 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="48dp"
+        android:background=" @color/colorGreen"
         android:text="Launch"
-        android:background="@color/colorWhite"
+        android:visibility="visible"
+
         tools:onClick="onClick" />
 
     <TextView
@@ -26,6 +29,8 @@
         android:layout_marginTop="63dp"
         android:text="Select Your Game Preferences:"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:elevation="15dp"
+        android:translationZ="15dp"
         tools:typeface="sans" />
 
     <TextView
@@ -36,6 +41,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="143dp"
         android:text="Game Name:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
         android:visibility="visible"
         tools:onClick="onClick" />
 
@@ -48,6 +54,7 @@
         android:layout_marginTop="214dp"
         android:onClick="onClick"
         android:text="Game Mode:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
         android:visibility="visible" />
 
     <TextView
@@ -58,6 +65,7 @@
         android:layout_centerVertical="true"
         android:onClick="onClick"
         android:text="Points to Win:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
         android:visibility="visible" />
 
     <TextView
@@ -69,19 +77,32 @@
         android:layout_marginBottom="222dp"
         android:onClick="onClick"
         android:text="Distance (in miles):"
+        android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
         android:visibility="visible" />
 
-    <EditText
-        android:id="@+id/game_name"
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/input_layout_game_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_marginEnd="36dp"
-        android:layout_marginTop="128dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Game 1" />
+        android:layout_marginTop="119dp">
+
+        <EditText
+            android:id="@+id/game_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="36dp"
+            android:layout_marginTop="128dp"
+            android:ems="10"
+            android:hint="Game 1"
+            android:inputType="textPersonName"
+            android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle" />
+
+    </android.support.design.widget.TextInputLayout>
 
     <Spinner
         android:id="@+id/mode_spinner"
@@ -112,5 +133,18 @@
         android:entries="@array/Game_Radius"
         android:spinnerMode="dialog"
         android:visibility="visible" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="61dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/start"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="0dp"
+        android:background="@color/colorGreen"
+        android:clickable="true"
+        android:src="@android:drawable/ic_dialog_map"
+        android:visibility="invisible"
+        app:backgroundTint="@color/colorGreen" />
 
 </RelativeLayout>

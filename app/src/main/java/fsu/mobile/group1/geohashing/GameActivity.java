@@ -7,11 +7,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.transition.Fade;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 
 import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -47,6 +50,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
     private GameUIFragment myGame;
     private ListFragment myList;
     private WaitingFragment myWait;
+    private ViewGroup mRoot;
 
     // Access a Cloud Firestore instance from your Activity
     private FirebaseFirestore db;
@@ -61,8 +65,8 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        names.add("Test");
-        names.add("Test");
+        mRoot=findViewById(R.id.root);
+
 
 
         mToolbar = (Toolbar) findViewById(R.id.action_bar);
@@ -111,6 +115,8 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
 
     //need to add database stuff here as well
     public void onCreateGame() {
+
+        TransitionManager.beginDelayedTransition(mRoot, new Fade());
         Bundle bundle = new Bundle();
         //  String userType="Create";
         //bundle.putString("userType", userType);

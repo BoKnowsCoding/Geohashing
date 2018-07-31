@@ -5,6 +5,7 @@ package fsu.mobile.group1.geohashing;
 * Google Android Developer Documentation
 * Code from Previous Projects
 * Udacity Firebase Course
+* https://www.androiddesignpatterns.com/2014/12/activity-fragment-transitions-in-android-lollipop-part1.html
 * */
 
 import android.content.Intent;
