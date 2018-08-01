@@ -1,5 +1,6 @@
 package fsu.mobile.group1.geohashing;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -8,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.transition.Explode;
 import android.transition.Fade;
 import android.transition.TransitionManager;
 import android.util.Log;
@@ -71,7 +73,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         //mRoot=findViewById(R.id.root);
         //getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         //getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
-
+        //setContentView(R.layout.activity_game);
 
 
         mToolbar = (Toolbar) findViewById(R.id.action_bar);
@@ -111,7 +113,10 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
 
 
     public void renderUI() {
+        Slide mySlide = new Slide(Gravity.RIGHT);
         myGame = new GameUIFragment();
+        mySlide.setStartDelay(10000);
+        myGame.setEnterTransition(mySlide);
         mManager = getSupportFragmentManager();
         fragTransaction = mManager.beginTransaction();
         fragTransaction.add(R.id.ui_fragment, myGame, "ui");
@@ -125,7 +130,6 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         Slide enterFade = new Slide(Gravity.LEFT);
        // exitFade.setDuration(200);
         enterFade.setStartDelay(500);
-
         //enterFade.setDuration(200);
         Bundle bundle = new Bundle();
         //  String userType="Create";
@@ -155,7 +159,6 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         fragTransaction.replace(R.id.ui_fragment, myList, "list_frag");
         fragTransaction.commit();
 //        names.clear();
-
     }
 
     //retrieves and lists the current games that are available to join
@@ -216,7 +219,8 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         // TODO: take gameName and gameType from user choice/input (create)
         gameName = "GameTest";
         gameType = "BattleRoyale";
-
+        //Explode explode = new Explode();
+      //  myWait.setExitTransition(explode);
         // check to see if mapsactivity runs
         // Map entry for game type (1, 2, 3)
         // Number of points to win (currently set at 5)
@@ -239,7 +243,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         bundle.putString("gameType", gameType);
         bundle.putString("gameName", gameName);
         intent.putExtras(bundle);
-        startActivity(intent);
+        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
         /*
         runningGame= new RunningGame();
         fragTransaction=mManager.beginTransaction();
