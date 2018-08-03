@@ -1,11 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="colorPrimary">#22512a</color>
-    <color name="colorPrimaryDark">#062803</color>
-    <color name="colorAccent">#167800</color>
-    <color name="colorWhite">#fcf9fa</color>
-    <color name="navigationBarColor"></color>
-    <color name="textColorPrimary"></color>
-    <color name="windowBackground">#22512a</color>
-    <color name="colorGreen">#22512a</color>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+
+    <!-- Default theme. -->
+
+
+
+
+    <!-- Other themes will go here. -->
+
+
+    <color name="primary_materiallight">#2e9a13</color>
+    <color name="primary_darkmaterial_light">#206b0d</color>
+    <color name="accent_materiallight">#66ff40</color>
+    <color name="primary_materialdark">#ac0000</color>
+    <color name="primary_dark_materialdark">#750505</color>
+    <color name="accent_materialdark">#ff4040</color>
+    <color name="colorBackground">#f3f2f2</color>
+    <color name="background_materialdark">#222222</color>
+    <color name="text_color_primary">#d1d1d1</color>
+    <color name="background_materiallight">#262626</color>
+    <color name="primary_text_material_dark">#1d4d78</color>
+    <color name="secondary_text_material_dark">#15272f</color>
+    <color name="color_Button_Normal">#2e57d2</color>
+
+    <color name="holo_blueLight">#ff33b5e5</color>
+    <color name="holo_blueBright">#ff00ddff</color>
+    <color name="holo_blueDark">#ff0099cc</color>
+    <color name="black">#000000</color>
+    <color name="foreground_materiallight">#272626</color>
 </resources>

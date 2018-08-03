@@ -12,15 +12,19 @@ package fsu.mobile.group1.geohashing;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -81,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
     private GoogleSignInClient mGoogleSignIn;
     private CallbackManager callbackManager;
     private FirebaseUser currentUser;
+    private Toolbar tools;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
@@ -88,6 +93,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+       // tools=findViewById(R.id.action_bar);
+        //tools.setBackgroundColor(Color.parseColor("#ac0000"));
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();       //don't delete
 

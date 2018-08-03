@@ -45,7 +45,7 @@ import java.util.Map;
 
 //This is the activity where we will base everything game related
 //We will launch the MapsActivity Fragment from here as well as any other fragments needed to support the game
-public class GameActivity extends AppCompatActivity implements GameUIFragment.UiListener, ListFragment.ListListener, WaitingFragment.WaitListener {
+public class GameActivity extends AppCompatActivity implements GameUIFragment.UiListener, ListFragment.ListListener, WaitingFragment.WaitListener, themeFragment.ThemeListener {
     private String gameName;
     private String gameType;
     private Toolbar mToolbar;
@@ -56,6 +56,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
     private ListFragment myList;
     private WaitingFragment myWait;
     private ViewGroup mRoot;
+    private themeFragment theme;
 
     // Access a Cloud Firestore instance from your Activity
     private FirebaseFirestore db;
@@ -105,6 +106,9 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         switch (id) {
             case R.id.sign_out:
                 signOut();
+                return true;
+            case R.id.theme:
+                loadThemeSettings();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -271,8 +275,21 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
             mFBLoginManager.logOut();
         }
 
+        public void loadThemeSettings(){
+            theme=new themeFragment();
+            mManager = getSupportFragmentManager();
+            fragTransaction = mManager.beginTransaction();
+            fragTransaction.replace(R.id.ui_fragment, theme, "wait");
+            fragTransaction.commit();
+        }
 
-
+        public void reloadTheme(){
+            theme=new themeFragment();
+            mManager = getSupportFragmentManager();
+            fragTransaction = mManager.beginTransaction();
+            fragTransaction.replace(R.id.theme_fragment, theme, "theme");
+            fragTransaction.commit();
+        }
 }
 
 

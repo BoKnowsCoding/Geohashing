@@ -4,9 +4,10 @@
     android:id="@+id/action_bar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="?attr/colorPrimary"
+    android:background="@color/cardview_shadow_start_color"
     android:elevation="4dp"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-    app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+    android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+    app:popupTheme="@style/Theme.AppCompat.Light.NoActionBar">
+
 
 </android.support.v7.widget.Toolbar>

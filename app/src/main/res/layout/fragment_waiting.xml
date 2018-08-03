@@ -9,9 +9,9 @@
 
     <Button
         android:id="@+id/start"
-        style="@android:style/Widget.Material.Light.Button.Borderless.Colored"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@android:style/Widget.DeviceDefault.Button.Inset"
+        android:layout_width="98dp"
+        android:layout_height="65dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="48dp"
@@ -30,8 +30,7 @@
         android:text="Select Your Game Preferences:"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:elevation="15dp"
-        android:translationZ="15dp"
-        tools:typeface="sans" />
+        android:translationZ="15dp" />
 
     <TextView
         android:id="@+id/game_name_text"
@@ -132,18 +131,5 @@
         android:entries="@array/Game_Radius"
         android:spinnerMode="dialog"
         android:visibility="visible" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingActionButton"
-        android:layout_width="61dp"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/start"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="0dp"
-        android:background="@color/colorGreen"
-        android:clickable="true"
-        android:src="@android:drawable/ic_dialog_map"
-        android:visibility="invisible"
-        app:backgroundTint="@color/colorGreen" />
 
 </RelativeLayout>
