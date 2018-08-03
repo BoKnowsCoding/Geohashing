@@ -220,7 +220,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
     }
 
     public void startGame(Bundle data) {
-        // TODO: take gameName and gameType from user choice/input (create)
+
         gameName = data.getString("Name");
         gameType = data.getString("Mode");
         //Explode explode = new Explode();
