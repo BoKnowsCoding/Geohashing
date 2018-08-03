@@ -237,7 +237,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         typeData.put("GameType", gameType);
         db.collection("games").document(gameName).collection("GameType").document("GameType").set(typeData);
         Map<String, Object> numPoints = new HashMap<>();
-        numPoints.put("numPoints", Integer.getInteger(data.getString("numPoints")));
+        numPoints.put("numPoints", data.getString("numPoints"));
         db.collection("games").document(gameName).collection("numPoints").document("num").set(numPoints);
         Map<String, Object> setDistance = new HashMap<>();
         setDistance.put("Distance", Double.parseDouble(data.getString("Radius")));
