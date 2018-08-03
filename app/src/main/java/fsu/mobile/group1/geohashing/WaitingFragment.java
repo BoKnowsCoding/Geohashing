@@ -105,6 +105,7 @@ public class WaitingFragment extends Fragment implements View.OnClickListener {
             name.setError("Please Enter a Game Name to Continue");
         }
         else {
+            Log.i("asdfasdf", "In Waiting Fragment");
             name.setErrorEnabled(false);
             Bundle bundle = new Bundle();
             bundle.putString("gameName", GameName.getText().toString());

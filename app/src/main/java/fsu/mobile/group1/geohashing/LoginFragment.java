@@ -22,17 +22,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
-/*
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-*/
-
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -74,6 +63,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         //For facebook and google
         mFacebook = root.findViewById(R.id.facebook_sign_in_button);
         mFacebook.setReadPermissions("email", "public_profile");
+        //mFacebook.setFragment(this);
 
         /*set the id's of Buttons and EditTexts*/
         mLogin=root.findViewById(R.id.sign_in);

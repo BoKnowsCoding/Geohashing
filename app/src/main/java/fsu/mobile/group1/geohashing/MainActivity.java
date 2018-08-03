@@ -30,6 +30,7 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.Auth;
@@ -53,17 +54,13 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-//import com.google.firebase.database.DataSnapshot;
-//import com.google.firebase.database.DatabaseError;
-//import com.google.firebase.database.DatabaseReference;
-//import com.google.firebase.database.FirebaseDatabase;
-//import com.google.firebase.database.ValueEventListener;
-
 
 public class MainActivity extends AppCompatActivity implements LoginFragment.LoginListener,
         GoogleApiClient.OnConnectionFailedListener{
@@ -89,20 +86,17 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // tools=findViewById(R.id.action_bar);
-        //tools.setBackgroundColor(Color.parseColor("#ac0000"));
         setContentView(R.layout.activity_main);
-        mAuth = FirebaseAuth.getInstance();       //don't delete
-
+        mAuth = FirebaseAuth.getInstance();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
         mGoogleSignIn = GoogleSignIn.getClient(this, gso);
+        callbackManager = CallbackManager.Factory.create();
 
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         if(accessToken != null && !accessToken.isExpired()){
@@ -113,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         displayLogin();
     }
 
+    //Checks if user was signed in in last session, if so will just start gameactivity automatically
     @Override
     public void onStart()
     {
@@ -145,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         Toast.makeText(getApplicationContext(), "Connection Failed", Toast.LENGTH_SHORT).show();
     }
 
+    //Email sign in
     public void onSignIn(String email, String password){
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -217,6 +213,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         startActivityForResult(signInIntent, 1000);
     }
 
+    //facebook sign in
     public void onFacebookSignIn(){
         callbackManager = CallbackManager.Factory.create();
         Log.i("MainActivity", "in onFacebookSignIn()");
@@ -242,6 +239,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         });
     }
 
+    //adds fb user to db
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
 
@@ -255,8 +253,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
-                            final DocumentReference userRef = db.collection("users")
-                                    .document(user.getUid());
+                            final DocumentReference userRef = db.collection("users").document(user.getUid());
                             userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -300,8 +297,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(MainActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Facebook failed.", Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -324,11 +320,13 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                 Log.w(TAG, "Google sign in failed", e);
             }
         } else{
-            //callbackManager.onActivityResult(RequestCode, resultCode, data);
+            //Toast.makeText(MainActivity.this, "Result got", Toast.LENGTH_SHORT).show();
+            callbackManager.onActivityResult(RequestCode, resultCode, data);
         }
 
     }
 
+    //google sign in
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
@@ -396,6 +394,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                 });
     }
 
+    //all this does is start gameactivity with the current user being the logged in user
     public void updateUI(FirebaseUser mUser)
     {
         Intent intent = new Intent(MainActivity.this, GameActivity.class);
@@ -406,7 +405,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
     }
 
 
-    //If there's any more permissions you need just copy and paste one of these and substitute
+    //Adds necessary perms
     public void checkReadPermissions()
     {
         if (ContextCompat.checkSelfPermission(this,

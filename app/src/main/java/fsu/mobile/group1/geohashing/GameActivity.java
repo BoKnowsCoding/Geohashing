@@ -2,6 +2,8 @@ package fsu.mobile.group1.geohashing;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.transition.Slide;
@@ -57,6 +59,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
     private WaitingFragment myWait;
     private ViewGroup mRoot;
     private themeFragment theme;
+    private Toolbar tools;
 
     // Access a Cloud Firestore instance from your Activity
     private FirebaseFirestore db;
@@ -82,6 +85,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
 //        getSupportActionBar().hide();
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+       // mToolbar.setBackground(new ColorDrawable(Color.parseColor("#ffffff")));
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         mFBLoginManager = LoginManager.getInstance();
@@ -287,6 +291,35 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
             mManager = getSupportFragmentManager();
             fragTransaction = mManager.beginTransaction();
             fragTransaction.replace(R.id.theme_fragment, theme, "theme");
+            fragTransaction.commit();
+        }
+
+        public void toolbarChange(String color) {
+
+            if (color.equals("Red")) {
+                mToolbar.setBackground(new ColorDrawable(Color.parseColor("#750505")));
+
+            }
+            else if(color.equals("Dark")){
+                 mToolbar.setBackground(new ColorDrawable(Color.parseColor("#262626")));
+
+            }
+            else if(color.equals("Blue")){
+                 mToolbar.setBackground(new ColorDrawable(Color.parseColor("#ff33b5e5")));
+
+            }
+            else if (color.equals("Green")){
+                 mToolbar.setBackground(new ColorDrawable(Color.parseColor("#206b0d")));
+
+            }
+        }
+
+        public void home(){
+        myGame= new GameUIFragment();
+            mManager = getSupportFragmentManager();
+            fragTransaction = mManager.beginTransaction();
+            fragTransaction.remove(theme);
+            fragTransaction.add(R.id.ui_fragment, myGame, "game2");
             fragTransaction.commit();
         }
 }
