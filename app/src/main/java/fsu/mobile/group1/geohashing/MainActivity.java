@@ -30,6 +30,7 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.Auth;
@@ -53,6 +54,9 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -103,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                 .requestEmail()
                 .build();
         mGoogleSignIn = GoogleSignIn.getClient(this, gso);
+        callbackManager = CallbackManager.Factory.create();
 
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         if(accessToken != null && !accessToken.isExpired()){
@@ -255,8 +260,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
-                            final DocumentReference userRef = db.collection("users")
-                                    .document(user.getUid());
+                            final DocumentReference userRef = db.collection("users").document(user.getUid());
                             userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -300,8 +304,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(MainActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Facebook failed.", Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -324,7 +327,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                 Log.w(TAG, "Google sign in failed", e);
             }
         } else{
-            //callbackManager.onActivityResult(RequestCode, resultCode, data);
+            //Toast.makeText(MainActivity.this, "Result got", Toast.LENGTH_SHORT).show();
+            callbackManager.onActivityResult(RequestCode, resultCode, data);
         }
 
     }

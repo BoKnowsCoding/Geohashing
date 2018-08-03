@@ -74,6 +74,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         //For facebook and google
         mFacebook = root.findViewById(R.id.facebook_sign_in_button);
         mFacebook.setReadPermissions("email", "public_profile");
+        //mFacebook.setFragment(this);
 
         /*set the id's of Buttons and EditTexts*/
         mLogin=root.findViewById(R.id.sign_in);

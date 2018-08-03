@@ -73,7 +73,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Location mLastLocation;
     Marker mCurrLocationMarker;
     Marker nodeLocationMarker;
-    Map<String, Marker> markerMap = new HashMap<>();
     private double goalLat;
     private double goalLong;
     FusedLocationProviderClient mFusedLocationClient;
@@ -145,7 +144,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         if (task.isSuccessful()) {
                             double lat;
                             double lng;
-                            if (gameType == "HashFSU") {
+                            Log.i(TAG, "gameType = " + gameType + " gameName = "+ gameName);
+                            if (gameType.equals("HashFSU")) {
                                 Map<String, String> data = new HashMap<>();
                                 Log.i(TAG, "NewLocation FSU Campus");
                                 Random r = new Random();
@@ -185,11 +185,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         .collection("nodeList")
                                         .document("curNode").set(data);
                             } else if(gameType.equals("FreeForAll")){
+                                Log.i(TAG,"FFA game going");
                                 Map<String, Double[]> data = new HashMap<>();
-                                Log.i("Aasdfsdfsdf", numPoints);
-                                int intNumPoints = Integer.parseInt(numPoints);
+                                int intNumPoints = Integer.getInteger(numPoints);
                                 pointsToWin = (int)Math.ceil(intNumPoints/4.0);
-                                mLastKnownLocation = task.getResult();
                                 Double[] latArray = new Double[intNumPoints];
                                 Double[] longArray = new Double[intNumPoints];
                                 for(int i = 0; i < intNumPoints; i++){
@@ -197,25 +196,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     double randomLong = Math.random() * .002 - .001;
                                     randomLat = Double.parseDouble(String.format("%.6f", randomLat));
                                     randomLong = Double.parseDouble(String.format("%.6f", randomLong));
-                                    if(task.getResult() == null)
-                                        Log.i("What the fuck", "why the fuck");
                                     mLastKnownLocation = task.getResult();
                                     latArray[i] = Double.parseDouble(String.format("%.6f", mLastKnownLocation.getLatitude())) + randomLat;
                                     longArray[i] = Double.parseDouble(String.format("%.6f", mLastKnownLocation.getLongitude())) + randomLong;
-                                    String nodeName = "Node" + Integer.toString(i);
-                                    MarkerOptions mOps = new MarkerOptions();
-                                    mOps.position(new LatLng(randomLat,randomLong));
-                                    mOps.title(nodeName);
-                                    mOps.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
-                                    markerMap.put(nodeName, mMap.addMarker(mOps));
-
-                                }
+                                    }
                                 data.put("lat", latArray);
                                 data.put("long", longArray);
                                 db.collection("games").document(gameName)
                                         .collection("nodeList")
                                         .document("curNode").set(data);
-
                             }
                             else {
                                 Map<String, String> data = new HashMap<>();
@@ -290,13 +279,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
 
-                if(gameType.equals("FreeForAll")){
+                if(gameType == "FreeForAll"){
                     final Location newLoc = location;
                     DocumentReference docRef = db.collection("games").document(gameName)
                             .collection("nodeList").document("Nodes");
                     docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task){
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             if(task.isSuccessful()){
                                 DocumentSnapshot document = task.getResult();
                                 if(document.exists()){
@@ -304,16 +293,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     Double[] latArray = (Double[])latLongMap.get("lat");
                                     Double[] longArray = (Double[])latLongMap.get("long");
                                     for(int i = 0; i < Integer.getInteger(numPoints); i++){
-                                        String nodeName = "Node" + Integer.toString(i);
-
                                         if(distanceFromGoal(latArray[i], longArray[i], Double.parseDouble(String.format("%.6f", newLoc.getLatitude())), Double.parseDouble(String.format("%.6f", newLoc.getLongitude()))) < 5.0){
-                                            String curNodeName = "Node" + Integer.toString(i);
-                                            Marker mark = markerMap.get(curNodeName);
-                                            mark.remove();
-                                            markerMap.remove(curNodeName);
                                             localGameScore++;
-                                            if(localGameScore >= pointsToWin){
-                                                DocumentReference docRef2 = db.collection("users").document(currentUser.getUid());
+                                            if(localGameScore > pointsToWin){
+                                               /* DocumentReference docRef2 = db.collection("users").document(currentUser.getUid());
                                                 docRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<DocumentSnapshot> task2) {

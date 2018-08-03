@@ -12,8 +12,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="230dp"
-        android:clickable="false"
-        android:visibility="invisible" />
+        android:clickable="true" />
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
