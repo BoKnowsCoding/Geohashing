@@ -112,6 +112,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         localGameScore = 0;
+        createNextNode();
     }
     /*
     DocumentReference docRef = db.collection("users").document(currentUser.getUid());
@@ -163,6 +164,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 Log.i(TAG, "Random Long: " + randomLong);
                                 lat = Double.parseDouble(String.format("%.6f", randomLat));
                                 lng = Double.parseDouble(String.format("%.6f", randomLong));
+                                Log.i(TAG, "Random Lat&Long post shortening: " + lat + " " + lng);
                                 mLastKnownLocation = task.getResult();
                                 data.put("lat", String.valueOf(lat));
                                 data.put("long", String.valueOf(lng));
@@ -397,7 +399,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double secondPart = (Math.cos(latRad1) * Math.cos(latRad2)
                 * (1.0 - Math.cos(longRad2-longRad1))/2.0);
         double mainPart = firstPart + secondPart;
-        Log.i(TAG, "Goal" + lat1 + " " + long1);
+        Log.i(TAG, "Goal: " + lat1 + " " + long1);
+        Log.i(TAG, "CurLocation: " + lat2 + " " + long2);
         Log.i(TAG,"Distance from goal: " + earthRadius * Math.acos(1.0-(mainPart * 2.0)));
         return earthRadius * Math.acos(1.0-(mainPart * 2.0));
     }
@@ -504,15 +507,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        createNextNode();
-        DocumentReference docRef = db.collection(gameName).document("nodeList")
-                .collection("nodes").document("curNode");
+
+        DocumentReference docRef = db.collection("games").document(gameName)
+                .collection("nodeList")
+                .document("curNode");
         docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot snapshot,
                                 @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
-                    System.err.println("Listen failed: " + e);
+                   Log.i(TAG,"Listen failed: " + e);
                     return;
                 }
 
@@ -533,7 +537,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     nodeLocationMarker = mMap.addMarker(markerOptions);
 
                 } else {
-                    System.out.print("Current data: null");
+                    Log.i(TAG,"Data Null");
                 }
             }
         });
