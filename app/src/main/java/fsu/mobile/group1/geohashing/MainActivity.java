@@ -435,6 +435,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
 
     }
 
+    //Prevents overlapping
     @Override
     public void onBackPressed() {
         if (getFragmentManager().getBackStackEntryCount() > 0 ){
