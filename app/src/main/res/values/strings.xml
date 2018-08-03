@@ -11,10 +11,9 @@
     <string name="fb_login_protocol_scheme">fb2168450936770445</string>
 
     <string-array name="Game_Modes">
-        <item>Single Objective</item>
-        <item>Multi Objective</item>
-        <item>FSU Geohash Challenge</item>
-        <item>Distance Challenge</item>
+        <item>FreeForAll</item>
+        <item>BattleRoyale</item>
+        <item>HashFSU</item>
     </string-array>
 
     <string-array name="Game_Points">
