@@ -204,9 +204,6 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
     //set the google sign in--if the button gets pushed more than once, we crash...
     // gonna have to check for that and do nothing when it's pressed multiple times or something...
     public void onGoogleSignIn(){
-        Toast.makeText(getApplicationContext(),
-                "Google Sign In Button Pushed", Toast.LENGTH_SHORT).show();
-
         //create signIn intent
         Intent signInIntent=mGoogleSignIn.getSignInIntent();
         //start the the activity to the sign in the user
