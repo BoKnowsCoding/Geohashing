@@ -279,15 +279,13 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
             mManager = getSupportFragmentManager();
             fragTransaction = mManager.beginTransaction();
             fragTransaction.replace(R.id.ui_fragment, theme, "wait");
+            fragTransaction.addToBackStack(this.toString());
             fragTransaction.commit();
         }
 
         public void reloadTheme(){
-            theme=new themeFragment();
             mManager = getSupportFragmentManager();
-            fragTransaction = mManager.beginTransaction();
-            fragTransaction.replace(R.id.theme_fragment, theme, "theme");
-            fragTransaction.commit();
+            mManager.popBackStack();
         }
 
         public void toolbarChange(String color) {
