@@ -144,7 +144,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         if (task.isSuccessful()) {
                             double lat;
                             double lng;
-                            if (gameType == "HashFSU") {
+                            Log.i(TAG, "gameType = " + gameType + " gameName = "+ gameName);
+                            if (gameType.equals("HashFSU")) {
                                 Map<String, String> data = new HashMap<>();
                                 Log.i(TAG, "NewLocation FSU Campus");
                                 Random r = new Random();
@@ -168,7 +169,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 db.collection("games").document(gameName)
                                         .collection("nodeList")
                                         .document("curNode").set(data);
-                            } else if (gameType == "BattleRoyale") {
+                            } else if (gameType.equals("BattleRoyale")) {
                                 Map<String, String> data = new HashMap<>();
                                 Log.i(TAG, "NewLocation proximal");
                                 double randomlat = Math.random() * .002 - .001;
@@ -183,7 +184,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 db.collection("games").document(gameName)
                                         .collection("nodeList")
                                         .document("curNode").set(data);
-                            } else if(gameType == "FreeForAll"){
+                            } else if(gameType.equals("FreeForAll")){
+                                Log.i(TAG,"FFA game going");
                                 Map<String, Double[]> data = new HashMap<>();
                                 int intNumPoints = Integer.getInteger(numPoints);
                                 pointsToWin = (int)Math.ceil(intNumPoints/4.0);
@@ -197,7 +199,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     mLastKnownLocation = task.getResult();
                                     latArray[i] = Double.parseDouble(String.format("%.6f", mLastKnownLocation.getLatitude())) + randomLat;
                                     longArray[i] = Double.parseDouble(String.format("%.6f", mLastKnownLocation.getLongitude())) + randomLong;
-                                }
+                                    }
                                 data.put("lat", latArray);
                                 data.put("long", longArray);
                                 db.collection("games").document(gameName)
@@ -274,7 +276,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mCurrLocationMarker = mMap.addMarker(markerOptions);
 
                 //move map camera
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,18));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
 
                 if(gameType == "FreeForAll"){
