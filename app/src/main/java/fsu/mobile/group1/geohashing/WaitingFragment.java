@@ -112,6 +112,7 @@ public class WaitingFragment extends Fragment implements View.OnClickListener {
             bundle.putString("gameType", Mode);
             bundle.putString("numPoints", Point);
             bundle.putString("Radius", Radius);
+            bundle.putString("userType","Creator");
             waitListener.startGame(bundle);
         }
 

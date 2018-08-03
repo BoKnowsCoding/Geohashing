@@ -37,6 +37,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -48,6 +49,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import org.w3c.dom.Document;
 
 import java.util.HashMap;
 import java.util.List;
@@ -83,6 +86,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String gameName;
     private String numPoints;
     private String maxDistance;
+    private String UserType;
     private int pointsToWin;
 
     //private Map<String, Object> userMap;
@@ -94,14 +98,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.i(TAG,"onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
+        UserType = getIntent().getExtras().getString("userType");
         // get name and type
-        gameName = getIntent().getExtras().getString("gameName");
-        Log.i(TAG,"gameName = " + gameName);
-        gameType = getIntent().getExtras().getString("gameType");
-        numPoints = getIntent().getExtras().getString("numPoints");
-        Log.i(TAG,"gameType = " + gameType);
-        maxDistance = getIntent().getExtras().getString("Radius");
+        if(UserType.equals("Creator")) {
+            gameName = getIntent().getExtras().getString("gameName");
+            Log.i(TAG, "gameName = " + gameName);
+            gameType = getIntent().getExtras().getString("gameType");
+            numPoints = getIntent().getExtras().getString("numPoints");
+            Log.i(TAG, "gameType = " + gameType);
+            maxDistance = getIntent().getExtras().getString("Radius");
+        }
+        else
+        {
+            gameName = getIntent().getExtras().getString("gameName");
+            Log.i(TAG, "gameName = " + gameName);
+        }
         //THIS IS FOR GETTING STUFF FROM DATABASE
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
@@ -467,9 +478,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     nodeLocationMarker = mMap.addMarker(markerOptions);
         }});
 */
-        Map<String, String> functionData = new HashMap<>();
-        functionData.put("theGameName", gameName);
-        db.collection("games").document(gameName).set(functionData);
+        if(UserType.equals("Creator")) {
+            Map<String, String> functionData = new HashMap<>();
+            functionData.put("theGameName", gameName);
+            db.collection("games").document(gameName).set(functionData);
+            }
         DocumentReference winDocRef = db.collection("games").document(gameName).collection("wins").document("isWin");
 
         winDocRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -487,12 +500,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     if(yesWin.equals("Y")){
                         Toast.makeText(MapsActivity.this,
                              "Someone has won!", Toast.LENGTH_SHORT).show();
-                        db.collection("games").document(gameName)
-                                .collection("nodeList")
+                        if(UserType.equals("Creator")) {
+                            db.collection("games").document(gameName)
+                                    .collection("nodeList")
 
-                                .document("curNode").delete();
-                        db.collection("games").document(gameName).collection("wins").document("isWin").delete();
-                        db.collection("games").document(gameName).delete();
+                                    .document("curNode").delete();
+                            db.collection("games").document(gameName).collection("wins").document("isWin").delete();
+                            db.collection("games").document(gameName).delete();
+                        }
 
                         /*
                         NotificationManager nm = (NotificationManager)getSystemService(MapsActivity.this.NOTIFICATION_SERVICE);
@@ -514,8 +529,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         });
-
-        createNextNode();
+        if(UserType.equals("Creator"))
+            createNextNode();
         DocumentReference docRef = db.collection("games").document(gameName)
                 .collection("nodeList")
                 .document("curNode");
@@ -550,6 +565,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        if(UserType.equals("Join"))
+        {
+            Task<DocumentSnapshot> task = db.collection("games").document(gameName).collection("GameType").document("GameType").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    Map<String, Object> t = documentSnapshot.getData();
+                    gameType = t.get("GameType").toString();;
+                    Log.i(TAG,"Gamename = " + gameName);
+                }
+            });
+            Task<DocumentSnapshot> task2 = db.collection("games").document(gameName).collection("numPoints").document("num").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    Map<String, Object> t = documentSnapshot.getData();
+                    numPoints = t.get("numPoints").toString();
+                    Log.i(TAG,"NumPoints to win = " + numPoints);
+                }
+            });
+            Task<DocumentSnapshot> task3 = db.collection("games").document(gameName).collection("distance").document("distance").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    Map<String, Object> t = documentSnapshot.getData();
+                    maxDistance = t.get("Distance").toString();
+                    Log.i(TAG,"Distance = " + maxDistance);
+                }
+            });
+
+        }
 
     }
 

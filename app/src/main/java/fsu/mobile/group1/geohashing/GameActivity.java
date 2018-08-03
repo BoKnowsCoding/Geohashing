@@ -211,17 +211,13 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         gameName = "GameTest";
         gameType = "BattleRoyale";
         //Add the user to the selected game document and move them to the lobby
-        Bundle bundle = new Bundle();
+        Bundle data = new Bundle();
         String userType = "Join";
-        String GameName = selection;
-        bundle.putString(gameName, GameName);
-        bundle.putString("userType", userType);
-        myWait = new WaitingFragment();
-        myWait.setArguments(bundle);
-        mManager = getSupportFragmentManager();
-        fragTransaction = mManager.beginTransaction();
-        fragTransaction.replace(R.id.ui_fragment, myWait, "wait");
-        fragTransaction.commit();
+        data.putString("gameName", selection);
+        data.putString("userType", userType);
+        Intent intent = new Intent(GameActivity.this, MapsActivity.class);
+        intent.putExtras(data);
+        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
     }
 
     public void startGame(Bundle data) {
