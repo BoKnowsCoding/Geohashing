@@ -101,7 +101,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         gameType = getIntent().getExtras().getString("gameType");
         numPoints = getIntent().getExtras().getString("numPoints");
         Log.i(TAG,"gameType = " + gameType);
-        maxDistance = getIntent().getExtras().getString("onJoinGame");
+        maxDistance = getIntent().getExtras().getString("Radius");
         //THIS IS FOR GETTING STUFF FROM DATABASE
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
@@ -516,8 +516,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         createNextNode();
-        DocumentReference docRef = db.collection(gameName).document("nodeList")
-                .collection("nodes").document("curNode");
+        DocumentReference docRef = db.collection("games").document(gameName)
+                .collection("nodeList")
+                .document("curNode");
         docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot snapshot,
