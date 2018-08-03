@@ -201,17 +201,13 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         gameName = "GameTest";
         gameType = "BattleRoyale";
         //Add the user to the selected game document and move them to the lobby
-        Bundle bundle = new Bundle();
+        Bundle data = new Bundle();
         String userType = "Join";
-        String GameName = selection;
-        bundle.putString(gameName, GameName);
-        bundle.putString("userType", userType);
-        myWait = new WaitingFragment();
-        myWait.setArguments(bundle);
-        mManager = getSupportFragmentManager();
-        fragTransaction = mManager.beginTransaction();
-        fragTransaction.replace(R.id.ui_fragment, myWait, "wait");
-        fragTransaction.commit();
+        data.putString("gameName", selection);
+        data.putString("userType", userType);
+        Intent intent = new Intent(GameActivity.this, MapsActivity.class);
+        intent.putExtras(data);
+        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
     }
 
     public void startGame(Bundle data) {
@@ -229,7 +225,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         typeData.put("GameType", gameType);
         db.collection("games").document(gameName).collection("GameType").document("GameType").set(typeData);
         Map<String, Object> numPoints = new HashMap<>();
-        numPoints.put("numPoints", Integer.getInteger(data.getString("numPoints")));
+        numPoints.put("numPoints", data.getString("numPoints"));
         db.collection("games").document(gameName).collection("numPoints").document("num").set(numPoints);
         Map<String, Object> setDistance = new HashMap<>();
         setDistance.put("Distance", Double.parseDouble(data.getString("Radius")));

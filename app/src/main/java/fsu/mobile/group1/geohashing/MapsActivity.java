@@ -37,6 +37,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -48,6 +49,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import org.w3c.dom.Document;
 
 import java.util.HashMap;
 import java.util.List;
@@ -83,6 +86,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String gameName;
     private String numPoints;
     private String maxDistance;
+    private String UserType;
     private int pointsToWin;
 
     //private Map<String, Object> userMap;
@@ -94,14 +98,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.i(TAG,"onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
+        UserType = getIntent().getExtras().getString("userType");
         // get name and type
-        gameName = getIntent().getExtras().getString("gameName");
-        Log.i(TAG,"gameName = " + gameName);
-        gameType = getIntent().getExtras().getString("gameType");
-        numPoints = getIntent().getExtras().getString("numPoints");
-        Log.i(TAG,"gameType = " + gameType);
-        maxDistance = getIntent().getExtras().getString("Radius");
+        if(UserType.equals("Creator")) {
+            gameName = getIntent().getExtras().getString("gameName");
+            Log.i(TAG, "gameName = " + gameName);
+            gameType = getIntent().getExtras().getString("gameType");
+            numPoints = getIntent().getExtras().getString("numPoints");
+            Log.i(TAG, "gameType = " + gameType);
+            maxDistance = getIntent().getExtras().getString("Radius");
+        }
+        else
+        {
+            gameName = getIntent().getExtras().getString("gameName");
+            Log.i(TAG, "gameName = " + gameName);
+        }
         //THIS IS FOR GETTING STUFF FROM DATABASE
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
@@ -114,6 +125,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         localGameScore = 0;
     }
+    /*
+    DocumentReference docRef = db.collection("users").document(currentUser.getUid());
+    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+    @Override
+    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+        if (task.isSuccessful()) {
+            DocumentSnapshot document = task.getResult();
+            if (document.exists()) {
+                map = document.getData();
+            } else {
+                Log.d(TAG, "No such document");
+            }
+        } else {
+            Log.d(TAG, "get failed with ", task.getException());
+        }
+    }
+});
+     */
+
 
     private void createNextNode() {
         Log.i(TAG,"createNextNode");
@@ -195,7 +225,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 Map<String, String> data = new HashMap<>();
                                 // if you properly set the game type this should never happen,
                                 // but these need to be defined to compile
-                                Log.i(TAG, "Error: No gameType set");
+                                Log.i(TAG,"Error: No gameType set");
                                 lat = 0;
                                 lng = 0;
                                 data.put("lat", String.valueOf(lat));
@@ -204,6 +234,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         .collection("nodeList")
                                         .document("Nodes").set(data);
                             }
+
+                            //Log.i(TAG, "Lat: " + lat );
+                            //Log.i(TAG, "lng: " + lng );
+                            //
+                            //db.collection(gameName).document("nodeList")
+                            //        .collection("nodes")
+                            //        .document("curNode").set(data);
                         }
 
                     }
@@ -305,11 +342,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             }
                         }
                     });
+                    //Double[] latList = db.collection("games").document(gameName).collection("nodeList").document("Nodes").get();
                 }else {
                     if (distanceFromGoal(goalLat, goalLong, Double.parseDouble(String.format("%.6f", location.getLatitude())),
                             Double.parseDouble(String.format("%.6f", location.getLongitude()))) < 5.0) {
                         localGameScore++;
                         Log.i(TAG, "Local score" + localGameScore);
+                        //Toast.makeText(MapsActivity.this,
+                        //        "You've captured: " + localGameScore + " nodes!", Toast.LENGTH_SHORT).show();
                         if (localGameScore > 4) {
                             DocumentReference docRef = db.collection("users")
                                     .document(currentUser.getUid());
@@ -413,9 +453,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
         // Original code in here:
         // Add a marker in Sydney and move the camera
-        Map<String, String> functionData = new HashMap<>();
-        functionData.put("theGameName", gameName);
-        db.collection("games").document(gameName).set(functionData);
+        //LatLng sydney = new LatLng(-34, 151);
+        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        /*
+        createNextNode(); //needs to be removed later
+        db.collection(gameName).document("nodeList").collection("nodes")
+                .document("curNode").get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshots) {
+                    Map<String,Object> node = documentSnapshots.getData();
+                    Log.i(TAG,"First node " +node.get("lat").toString() + " "
+                            + node.get("long").toString());
+                    goalLat = Double.parseDouble(node.get("lat").toString());
+                    goalLong = Double.parseDouble(node.get("long").toString());
+                    if(nodeLocationMarker != null) nodeLocationMarker.remove();
+                    LatLng latLng = new LatLng(goalLat, goalLong);
+                    MarkerOptions markerOptions = new MarkerOptions();
+                    markerOptions.position(latLng);
+                    markerOptions.title("Goal!");
+                    markerOptions.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                    nodeLocationMarker = mMap.addMarker(markerOptions);
+        }});
+*/
+        if(UserType.equals("Creator")) {
+            Map<String, String> functionData = new HashMap<>();
+            functionData.put("theGameName", gameName);
+            db.collection("games").document(gameName).set(functionData);
+            }
         DocumentReference winDocRef = db.collection("games").document(gameName).collection("wins").document("isWin");
 
         winDocRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -433,13 +500,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     if(yesWin.equals("Y")){
                         Toast.makeText(MapsActivity.this,
                              "Someone has won!", Toast.LENGTH_SHORT).show();
-                        db.collection("games").document(gameName)
-                                .collection("nodeList")
+                        if(UserType.equals("Creator")) {
+                            db.collection("games").document(gameName)
+                                    .collection("nodeList")
 
-                                .document("curNode").delete();
-                        db.collection("games").document(gameName).collection("wins").document("isWin").delete();
-                        db.collection("games").document(gameName).delete();
+                                    .document("curNode").delete();
+                            db.collection("games").document(gameName).collection("wins").document("isWin").delete();
+                            db.collection("games").document(gameName).delete();
+                        }
 
+                        /*
+                        NotificationManager nm = (NotificationManager)getSystemService(MapsActivity.this.NOTIFICATION_SERVICE);
+
+                        Notification.Builder builder = new Notification.Builder(MapsActivity.this);
+                        builder.setContentTitle("Game Completed");
+                        builder.setContentText("Someone Won!");
+                        builder.setAutoCancel(false);
+                        builder.setSmallIcon(R.mipmap.ic_launcher);
+                        builder.setWhen(System.currentTimeMillis());
+                        nm.notify(42069, build(builder));
+*/
                         Intent intent = new Intent(MapsActivity.this, GameActivity.class);
                         startActivity(intent);
                     }
@@ -449,8 +529,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         });
-
-        createNextNode();
+        if(UserType.equals("Creator"))
+            createNextNode();
         DocumentReference docRef = db.collection("games").document(gameName)
                 .collection("nodeList")
                 .document("curNode");
@@ -485,6 +565,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        if(UserType.equals("Join"))
+        {
+            Task<DocumentSnapshot> task = db.collection("games").document(gameName).collection("GameType").document("GameType").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    Map<String, Object> t = documentSnapshot.getData();
+                    gameType = t.get("GameType").toString();;
+                    Log.i(TAG,"Gamename = " + gameName);
+                }
+            });
+            Task<DocumentSnapshot> task2 = db.collection("games").document(gameName).collection("numPoints").document("num").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    Map<String, Object> t = documentSnapshot.getData();
+                    numPoints = t.get("numPoints").toString();
+                    Log.i(TAG,"NumPoints to win = " + numPoints);
+                }
+            });
+            Task<DocumentSnapshot> task3 = db.collection("games").document(gameName).collection("distance").document("distance").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    Map<String, Object> t = documentSnapshot.getData();
+                    maxDistance = t.get("Distance").toString();
+                    Log.i(TAG,"Distance = " + maxDistance);
+                }
+            });
+
+        }
 
     }
 
