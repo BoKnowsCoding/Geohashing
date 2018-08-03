@@ -231,22 +231,20 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         // How far away each node should be (currently set at 2 km)
         // nodes table
         // Winner entry
-        db.collection("games").document("I wanna die lmao");
+        db.collection("games").document(gameName);
         Map<String, Object> typeData = new HashMap<>();
-        typeData.put("GameType", 1);
-        db.collection("games").document("I wanna die lmao").collection("GameType").document("GameType").set(typeData);
+        typeData.put("GameType", gameType);
+        db.collection("games").document(gameName).collection("GameType").document("GameType").set(typeData);
         Map<String, Object> numPoints = new HashMap<>();
-        numPoints.put("numPoints", 5);
-        db.collection("games").document("I wanna die lmao").collection("numPoints").document("num").set(numPoints);
+        numPoints.put("numPoints", Integer.getInteger(data.getString("Point")));
+        db.collection("games").document(gameName).collection("numPoints").document("num").set(numPoints);
         Map<String, Object> setDistance = new HashMap<>();
-        setDistance.put("Distance", 1.0);
-        db.collection("games").document("I wanna die lmao").collection("distance").document("distance").set(setDistance);
+        setDistance.put("Distance", Double.parseDouble(data.getString("Radius")));
+        db.collection("games").document(gameName).collection("distance").document("distance").set(setDistance);
 
         Intent intent = new Intent(GameActivity.this, MapsActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString("gameType", gameType);
-        bundle.putString("gameName", gameName);
-        intent.putExtras(bundle);
+
+        intent.putExtras(data);
         startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
         /*
         runningGame= new RunningGame();
