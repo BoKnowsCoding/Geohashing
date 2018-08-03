@@ -434,4 +434,13 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
                     MY_PERMISSIONS_REQUEST_READ_PHONE_STATE);
 
     }
+
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() > 0 ){
+            getFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+        }
+    }
 }

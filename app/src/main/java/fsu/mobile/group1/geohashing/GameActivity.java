@@ -131,13 +131,10 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         Slide enterFade = new Slide(Gravity.LEFT);
         enterFade.setStartDelay(500);
         Bundle bundle = new Bundle();
-        //  String userType="Create";
-        //bundle.putString("userType", userType);
 
         myWait = new WaitingFragment();
         myWait.setEnterTransition(enterFade);
         myGame.setExitTransition(exitFade);
-        //myWait.setArguments(bundle);
         mManager = getSupportFragmentManager();
         fragTransaction = mManager.beginTransaction();
         fragTransaction.replace(R.id.ui_fragment, myWait, "wait");
