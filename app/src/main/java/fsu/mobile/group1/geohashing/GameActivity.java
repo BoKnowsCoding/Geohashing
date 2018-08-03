@@ -221,8 +221,8 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
 
     public void startGame(Bundle data) {
 
-        gameName = data.getString("Name");
-        gameType = data.getString("Mode");
+        gameName = data.getString("gameName");
+        gameType = data.getString("gameType");
         //Explode explode = new Explode();
       //  myWait.setExitTransition(explode);
         // check to see if mapsactivity runs
@@ -236,7 +236,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         typeData.put("GameType", gameType);
         db.collection("games").document(gameName).collection("GameType").document("GameType").set(typeData);
         Map<String, Object> numPoints = new HashMap<>();
-        numPoints.put("numPoints", Integer.getInteger(data.getString("Point")));
+        numPoints.put("numPoints", Integer.getInteger(data.getString("numPoints")));
         db.collection("games").document(gameName).collection("numPoints").document("num").set(numPoints);
         Map<String, Object> setDistance = new HashMap<>();
         setDistance.put("Distance", Double.parseDouble(data.getString("Radius")));
