@@ -82,6 +82,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String gameType;
     private String gameName;
     private String numPoints;
+    private String maxDistance;
     private int pointsToWin;
 
     //private Map<String, Object> userMap;
@@ -100,7 +101,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         gameType = getIntent().getExtras().getString("gameType");
         numPoints = getIntent().getExtras().getString("numPoints");
         Log.i(TAG,"gameType = " + gameType);
-
+        maxDistance = getIntent().getExtras().getString("Radius");
         //THIS IS FOR GETTING STUFF FROM DATABASE
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
@@ -174,8 +175,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             } else if (gameType.equals("BattleRoyale")) {
                                 Map<String, String> data = new HashMap<>();
                                 Log.i(TAG, "NewLocation proximal");
-                                double randomlat = Math.random() * .002 - .001;
-                                double randomlong = Math.random() * .002 - .001;
+                                double randomlat = Math.random() * Double.parseDouble(maxDistance) - Double.parseDouble(maxDistance)/2.0;
+                                double randomlong = Math.random() * Double.parseDouble(maxDistance) - Double.parseDouble(maxDistance)/2.0;
                                 randomlat = Double.parseDouble(String.format("%.6f", randomlat));
                                 randomlong = Double.parseDouble(String.format("%.6f", randomlong));
                                 mLastKnownLocation = task.getResult();
@@ -209,7 +210,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         .document("curNode").set(data);
                             }
                             else {
-                                Map<String, String> data = new HashMap<>();
+                                Map<String, Object> data = new HashMap<>();
                                 // if you properly set the game type this should never happen,
                                 // but these need to be defined to compile
                                 Log.i(TAG,"Error: No gameType set");
@@ -298,7 +299,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         if(distanceFromGoal(latArray[i], longArray[i], Double.parseDouble(String.format("%.6f", newLoc.getLatitude())), Double.parseDouble(String.format("%.6f", newLoc.getLongitude()))) < 5.0){
                                             localGameScore++;
                                             if(localGameScore > pointsToWin){
-                                                DocumentReference docRef2 = db.collection("users").document(currentUser.getUid());
+                                               /* DocumentReference docRef2 = db.collection("users").document(currentUser.getUid());
                                                 docRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
@@ -318,7 +319,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                             }
                                                         }
                                                     }
-                                                });
+                                                });*/
                                                 Map<String, Object> winMap = new HashMap<>();
                                                 winMap.put("WIN", "Y");
                                                 db.collection("games").document(gameName).collection("wins").document("isWin").set(winMap);
@@ -338,7 +339,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         //Toast.makeText(MapsActivity.this,
                         //        "You've captured: " + localGameScore + " nodes!", Toast.LENGTH_SHORT).show();
                         if (localGameScore > 4) {
-                            DocumentReference docRef = db.collection("users")
+                           /* DocumentReference docRef = db.collection("users")
                                     .document(currentUser.getUid());
                             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
@@ -372,8 +373,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         Log.d(TAG, "get failed with ", task.getException());
                                     }
                                 }
-                            });
-                            Map<String, Object> winMap = new HashMap<>();
+                            });*/
+                            Map<String, String> winMap = new HashMap<>();
                             winMap.put("WIN", "Y");
                             db.collection("games").document(gameName).collection("wins").document("isWin").set(winMap);
                         } else {
@@ -467,7 +468,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }});
 */
 
-        DocumentReference winDocRef = db.collection(gameName).document("wins");
+        DocumentReference winDocRef = db.collection("games").document(gameName).collection("wins").document("isWin");
         winDocRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot snapshot,
@@ -482,7 +483,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     String yesWin = (String)win.get("WIN");
                     if(yesWin.equals("Y")){
                         Toast.makeText(MapsActivity.this,
-                                "You've won!", Toast.LENGTH_SHORT).show();
+                                "Someone has won!", Toast.LENGTH_SHORT).show();
                         db.collection(gameName).document("nodeList").collection("nodes")
                                 .document("curNode").delete();
                         db.collection(gameName).document("wins").delete();
