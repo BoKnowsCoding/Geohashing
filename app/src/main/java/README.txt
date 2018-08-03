@@ -9,3 +9,5 @@ L1O+e7UCSfsbnXK9yMrm04SBfAk= looks like this
 
 KNOWN BUGS:
 -Game only disappears if someone wins
+-Free for all doesnt work
+-Some of the ui is bad on smallers phone
