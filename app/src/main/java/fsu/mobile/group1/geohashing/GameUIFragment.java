@@ -33,7 +33,6 @@ public class GameUIFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-       // getContext().setTheme(R.style.Blackout);
 
         View root= inflater.inflate(R.layout.fragment_game_ui, container, false);
         mCreate=root.findViewById(R.id.create);

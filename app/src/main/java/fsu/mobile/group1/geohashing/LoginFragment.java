@@ -43,8 +43,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private com.facebook.login.widget.LoginButton mFacebook;
     Map<String, Object> user;
 
-//    private FirebaseAuth mAuth;
-
 
     public LoginFragment() {
         // Required empty public constructor
@@ -55,7 +53,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-//        mAuth = FirebaseAuth.getInstance();
 
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_login, container, false);

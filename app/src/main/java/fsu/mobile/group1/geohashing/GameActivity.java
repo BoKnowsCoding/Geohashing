@@ -74,18 +74,12 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        //mRoot=findViewById(R.id.root);
-        //getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        //getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
-        //setContentView(R.layout.activity_game);
 
 
         mToolbar = (Toolbar) findViewById(R.id.action_bar);
         gameName = "Brandon is so cool wow"; //tb removed later
-//        getSupportActionBar().hide();
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-       // mToolbar.setBackground(new ColorDrawable(Color.parseColor("#ffffff")));
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         mFBLoginManager = LoginManager.getInstance();
@@ -93,7 +87,6 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         db = FirebaseFirestore.getInstance();
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder().setPersistenceEnabled(true).build();
         db.setFirestoreSettings(settings);
-        //onCreateGame(); //for testing purposes
         renderUI();
     }
 
@@ -136,9 +129,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
 
         Slide exitFade= new Slide();        //used to load fade out the current fragment
         Slide enterFade = new Slide(Gravity.LEFT);
-       // exitFade.setDuration(200);
         enterFade.setStartDelay(500);
-        //enterFade.setDuration(200);
         Bundle bundle = new Bundle();
         //  String userType="Create";
         //bundle.putString("userType", userType);
@@ -166,7 +157,6 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
         fragTransaction.addToBackStack(myGame.toString());
         fragTransaction.replace(R.id.ui_fragment, myList, "list_frag");
         fragTransaction.commit();
-//        names.clear();
     }
 
     //retrieves and lists the current games that are available to join
@@ -228,8 +218,6 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
 
         gameName = data.getString("gameName");
         gameType = data.getString("gameType");
-        //Explode explode = new Explode();
-      //  myWait.setExitTransition(explode);
         // check to see if mapsactivity runs
         // Map entry for game type (1, 2, 3)
         // Number of points to win (currently set at 5)
@@ -251,15 +239,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
 
         intent.putExtras(data);
         startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
-        /*
-        runningGame= new RunningGame();
-        fragTransaction=mManager.beginTransaction();
-        fragTransaction.addToBackStack(myWait.toString());
-        fragTransaction.replace(R.id.wait_fragment, runningGame, "running_frag");
-        fragTransaction.commit();
-        //so that loaded up the map fragment into the main one here
-        //then we need to attach all the listeners which will implement game logic
-        */
+
 
     }
         public void signOut() {
