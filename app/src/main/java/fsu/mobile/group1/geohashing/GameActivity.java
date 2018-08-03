@@ -221,10 +221,8 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
 
     public void startGame(Bundle data) {
         // TODO: take gameName and gameType from user choice/input (create)
-        gameName = "GameTest";
-        gameType = "BattleRoyale";
         //Explode explode = new Explode();
-      //  myWait.setExitTransition(explode);
+    //  myWait.setExitTransition(explode);
         // check to see if mapsactivity runs
         // Map entry for game type (1, 2, 3)
         // Number of points to win (currently set at 5)
