@@ -167,6 +167,7 @@ public class GameActivity extends AppCompatActivity implements GameUIFragment.Ui
 
     //retrieves and lists the current games that are available to join
     public void getGames() {
+        names = new ArrayList<String>();
         Log.i("test", "Called function getGames()");
         Map<String, Object> asdf = new HashMap<>();
         asdf.put("blah", "blasdfasdf");

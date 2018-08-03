@@ -175,8 +175,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             } else if (gameType.equals("BattleRoyale")) {
                                 Map<String, String> data = new HashMap<>();
                                 Log.i(TAG, "NewLocation proximal");
-                                double randomlat = Math.random() * Double.parseDouble(maxDistance) - Double.parseDouble(maxDistance)/2.0;
-                                double randomlong = Math.random() * Double.parseDouble(maxDistance) - Double.parseDouble(maxDistance)/2.0;
+                                double randomlat = Math.random() * Double.parseDouble(maxDistance)/70.0 - Double.parseDouble(maxDistance)/140.0;
+                                double randomlong = Math.random() * Double.parseDouble(maxDistance)/70.0 - Double.parseDouble(maxDistance)/140.0;
                                 randomlat = Double.parseDouble(String.format("%.6f", randomlat));
                                 randomlong = Double.parseDouble(String.format("%.6f", randomlong));
                                 mLastKnownLocation = task.getResult();
@@ -467,7 +467,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     nodeLocationMarker = mMap.addMarker(markerOptions);
         }});
 */
-
+        Map<String, String> functionData = new HashMap<>();
+        functionData.put("theGameName", gameName);
+        db.collection("games").document(gameName).set(functionData);
         DocumentReference winDocRef = db.collection("games").document(gameName).collection("wins").document("isWin");
         winDocRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
@@ -484,9 +486,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     if(yesWin.equals("Y")){
                         Toast.makeText(MapsActivity.this,
                                 "Someone has won!", Toast.LENGTH_SHORT).show();
-                        db.collection(gameName).document("nodeList").collection("nodes")
+                        db.collection("games").document(gameName)
+                                .collection("nodeList")
                                 .document("curNode").delete();
-                        db.collection(gameName).document("wins").delete();
+                        db.collection("games").document(gameName).collection("wins").document("isWin").delete();
+                        db.collection("games").document(gameName).delete();
+
                         /*
                         NotificationManager nm = (NotificationManager)getSystemService(MapsActivity.this.NOTIFICATION_SERVICE);
 
