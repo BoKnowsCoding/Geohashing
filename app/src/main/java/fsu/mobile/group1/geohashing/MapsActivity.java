@@ -487,7 +487,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 .document("curNode").delete();
                         db.collection(gameName).document("wins").delete();
                         /*
-                        NotificationManager nm = (NotificationManager)getSystemService(MapsActivity.this.NOTIFICATION_SERVICE);
+                        Notifica    tionManager nm = (NotificationManager)getSystemService(MapsActivity.this.NOTIFICATION_SERVICE);
 
                         Notification.Builder builder = new Notification.Builder(MapsActivity.this);
                         builder.setContentTitle("Game Completed");
@@ -551,6 +551,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         dr.update(remove);
     }
 
+    //Get the proper builder for the device version
     public static Notification build(final Notification.Builder builder) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             return builder.build();
@@ -558,7 +559,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return builder.getNotification();
         }
     }
-
-
 
 }
