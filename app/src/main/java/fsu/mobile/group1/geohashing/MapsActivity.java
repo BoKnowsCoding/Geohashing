@@ -296,7 +296,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         if(distanceFromGoal(latArray[i], longArray[i], Double.parseDouble(String.format("%.6f", newLoc.getLatitude())), Double.parseDouble(String.format("%.6f", newLoc.getLongitude()))) < 5.0){
                                             localGameScore++;
                                             if(localGameScore > pointsToWin){
-                                               /* DocumentReference docRef2 = db.collection("users").document(currentUser.getUid());
+                                               DocumentReference docRef2 = db.collection("users").document(currentUser.getUid());
                                                 docRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
