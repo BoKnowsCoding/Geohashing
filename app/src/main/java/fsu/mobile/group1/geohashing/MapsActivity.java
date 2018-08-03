@@ -82,6 +82,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String gameType;
     private String gameName;
     private String numPoints;
+    private String maxDistance;
     private int pointsToWin;
 
     //private Map<String, Object> userMap;
@@ -100,7 +101,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         gameType = getIntent().getExtras().getString("gameType");
         numPoints = getIntent().getExtras().getString("numPoints");
         Log.i(TAG,"gameType = " + gameType);
-
+        maxDistance = getIntent().getExtras().getString("onJoinGame");
         //THIS IS FOR GETTING STUFF FROM DATABASE
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
@@ -172,13 +173,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             } else if (gameType.equals("BattleRoyale")) {
                                 Map<String, String> data = new HashMap<>();
                                 Log.i(TAG, "NewLocation proximal");
-<<<<<<< HEAD
+
                                 double randomlat = Math.random() * Double.parseDouble(maxDistance)/70.0 - Double.parseDouble(maxDistance)/140.0;
                                 double randomlong = Math.random() * Double.parseDouble(maxDistance)/70.0 - Double.parseDouble(maxDistance)/140.0;
-=======
-                                double randomlat = Math.random() * .002 - .001;
-                                double randomlong = Math.random() * .002 - .001;
->>>>>>> 89afd54880205128dc70938d66e2d75094829de9
+
+
                                 randomlat = Double.parseDouble(String.format("%.6f", randomlat));
                                 randomlong = Double.parseDouble(String.format("%.6f", randomlong));
                                 mLastKnownLocation = task.getResult();
@@ -468,15 +467,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     nodeLocationMarker = mMap.addMarker(markerOptions);
         }});
 */
-<<<<<<< HEAD
         Map<String, String> functionData = new HashMap<>();
         functionData.put("theGameName", gameName);
         db.collection("games").document(gameName).set(functionData);
         DocumentReference winDocRef = db.collection("games").document(gameName).collection("wins").document("isWin");
-=======
 
-        DocumentReference winDocRef = db.collection(gameName).document("wins");
->>>>>>> 89afd54880205128dc70938d66e2d75094829de9
         winDocRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot snapshot,
@@ -491,14 +486,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     String yesWin = (String)win.get("WIN");
                     if(yesWin.equals("Y")){
                         Toast.makeText(MapsActivity.this,
-<<<<<<< HEAD
-                                "Someone has won!", Toast.LENGTH_SHORT).show();
+                             "Someone has won!", Toast.LENGTH_SHORT).show();
                         db.collection("games").document(gameName)
                                 .collection("nodeList")
-=======
-                                "You've won!", Toast.LENGTH_SHORT).show();
-                        db.collection(gameName).document("nodeList").collection("nodes")
->>>>>>> 89afd54880205128dc70938d66e2d75094829de9
+
                                 .document("curNode").delete();
                         db.collection("games").document(gameName).collection("wins").document("isWin").delete();
                         db.collection("games").document(gameName).delete();
